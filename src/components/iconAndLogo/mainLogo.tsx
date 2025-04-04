@@ -1,6 +1,6 @@
 import React from "react";
 
-export const MainLogoSmall = ({ width }: { width?: string }) => {
+export const MainLogo = ({ width }: { width?: string }) => {
   return (
     <svg
       width={width || "100"}
