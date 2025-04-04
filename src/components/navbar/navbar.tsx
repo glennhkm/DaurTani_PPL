@@ -38,25 +38,25 @@ export const Navbar = () => {
           >
             <a
               href="/marketplace"
-              className=" hover:text-brand01 px-3 py-2"
+              className=" hover:text-brand01 duration-200 px-3 py-2"
             >
               Marketplace
             </a>
             <a
               href="/panduan"
-              className=" hover:text-brand01 px-3 py-2"
+              className=" hover:text-brand01 duration-200 px-3 py-2"
             >
               Panduan
             </a>
             <a
               href="/komunitas"
-              className=" hover:text-brand01 px-3 py-2"
+              className=" hover:text-brand01 duration-200 px-3 py-2"
             >
               Komunitas
             </a>
             <a
               href="/register"
-              className="bg-brand01 px-4 py-2 hover:bg-brand01/90 transition-colors"
+              className="bg-brand01 px-4 py-2 hover:opacity-80 duration-200 transition-colors"
             >
               Masuk/Daftar
             </a>
