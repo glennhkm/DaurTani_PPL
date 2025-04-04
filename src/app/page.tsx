@@ -8,7 +8,6 @@ import { Typewriter } from "react-simple-typewriter";
 import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
 import { dmSans } from "@/components/fonts/dmSans";
 import { useEffect, useState } from "react";
-import Marquee from "react-fast-marquee";
 
 export default function Home() {
   const [hoverIndex, setHoverIndex] = useState<Number | null>(null);
