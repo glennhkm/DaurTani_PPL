@@ -13,9 +13,9 @@ const AISection = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [showScrollButton, setShowScrollButton] = useState(false);
+  const firstMessageRef = useRef<HTMLDivElement | null>(null);
+  const inputMessageRef = useRef<HTMLInputElement | null>(null);
   
-  // Demo questions untuk inspirasi user
   const sampleQuestions = [
     "Bagaimana cara mengolah jerami padi menjadi pupuk organik?",
     "Apa manfaat ekonomi dari pengolahan limbah pertanian?",
@@ -24,46 +24,50 @@ const AISection = () => {
   ];
 
   useEffect(() => {
-    scrollToBottom();
-  }, []);
-  
-  useEffect(() => {
-    const chatContainer = document.getElementById("chat-container");
-    
-    const handleScroll = () => {
-      if (chatContainer) {
-        const isScrolledUp = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight > 100;
-        setShowScrollButton(isScrolledUp);
-      }
-    };
-    
-    if (chatContainer) {
-      chatContainer.addEventListener("scroll", handleScroll);
-      return () => chatContainer.removeEventListener("scroll", handleScroll);
-    }
+    firstScroll()
   }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  
+    setTimeout(() => {
+      if (inputMessageRef.current) {
+        const len = inputMessageRef.current.value.length;
+        inputMessageRef.current.focus();
+        inputMessageRef.current.setSelectionRange(len, len);
+      }
+    }, 400);
   };
+  
+  const firstScroll = () => {
+    firstMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  
+    setTimeout(() => {
+      if (inputMessageRef.current) {
+        const len = inputMessageRef.current.value.length;
+        inputMessageRef.current.focus();
+        inputMessageRef.current.setSelectionRange(len, len);
+      }
+    }, 400);
+  };
+  
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input.trim()) return;    
 
     const newUserMessage = {
       role: "user",
       content: input
     };
-
+    
     setMessages((prev) => [...prev, newUserMessage]);
+    scrollToBottom()
     setInput("");
     setIsTyping(true);
     
-    // Simulasi respon dari AI dengan delay untuk efek realistis
     setTimeout(() => {
       let response;
       
-      // Generate slightly different responses based on question content
       if (input.toLowerCase().includes("jerami") || input.toLowerCase().includes("padi")) {
         response = "Jerami padi dapat diolah menjadi pupuk organik melalui proses pengomposan. Pertama, potong jerami menjadi ukuran 5-10cm, lalu tumpuk dan siram dengan larutan aktivator EM4 yang sudah dicampur air dan molase. Tutup dengan terpal dan biarkan selama 14-21 hari dengan pembalikan setiap 7 hari. Pupuk organik dari jerami padi sangat baik untuk meningkatkan kesuburan tanah dan mengurangi penggunaan pupuk kimia.";
       } else if (input.toLowerCase().includes("biogas") || input.toLowerCase().includes("ternak")) {
@@ -80,16 +84,18 @@ const AISection = () => {
       };
 
       setMessages((prev) => [...prev, newBotMessage]);
+      scrollToBottom()
       setIsTyping(false);
     }, 1500);
   };
 
   const handleSampleQuestion = (question: string) => {
     setInput(question);
+    scrollToBottom();
   };
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-4" ref={firstMessageRef}>
       <div className="bg-gradient-to-br from-brand01/5 to-brand01/20 rounded-xl p-4 mb-4 flex items-center gap-3 border border-brand01/20">
         <div className="bg-brand01/20 p-2 rounded-full">
           <Info size={16} className="text-brand01" />
@@ -130,7 +136,7 @@ const AISection = () => {
                 {msg.content}
               </div>
             ) : (
-              <div className="flex gap-3">
+              <div className={`flex gap-3 ${msg.role === "user" && 'justify-end'}`}>
                 {msg.role === "assistant" && (
                   <div className="h-8 w-8 rounded-full bg-brand01/20 flex items-center justify-center mt-1">
                     <Bot size={16} className="text-brand01" />
@@ -169,22 +175,15 @@ const AISection = () => {
             </div>
           </div>
         )}
-        
+        <div className="mt-20"></div>
         <div ref={messagesEndRef} />
         
-        {showScrollButton && (
-          <button 
-            onClick={scrollToBottom}
-            className="absolute bottom-4 right-4 bg-brand01 text-neutral01 rounded-full p-2 shadow-md hover:bg-brand01/80 transition-colors"
-          >
-            <ArrowDown size={16} />
-          </button>
-        )}
       </div>
       
       <div className="flex items-center gap-3 bg-neutral01 rounded-xl p-3 border border-brand01/30 shadow-sm focus-within:ring-2 focus-within:ring-brand01/30 transition-all">
         <input
           type="text"
+          ref={inputMessageRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
