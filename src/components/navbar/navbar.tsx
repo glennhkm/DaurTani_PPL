@@ -7,6 +7,13 @@ import { usePathname } from "next/navigation";
 export const Navbar = () => {
   const [atTop, setAtTop] = useState(true);
   const pathname = usePathname()
+  
+  const hiddenPaths = ["/login", "/register"];
+  
+  if (hiddenPaths.includes(pathname)) {
+    return null;
+  }
+  
   const navMenu = [
     {
       name: "Marketplace",
