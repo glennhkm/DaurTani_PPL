@@ -2,13 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Leaf, Recycle, Users } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { MainLogo } from "@/components/iconAndLogo/mainLogo";
 import { Typewriter } from "react-simple-typewriter";
 import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
 import { dmSans } from "@/components/fonts/dmSans";
-import { useEffect, useState } from "react";
-import Marquee from "react-fast-marquee";
+import { useState } from "react";
 
 export default function Home() {
   const [hoverIndex, setHoverIndex] = useState<Number | null>(null);
@@ -137,10 +136,10 @@ export default function Home() {
                     }}
                   />
                   <div
-                    className={`w-full h-full absolute inset-0 bg-brand03/70 transition-opacity duration-500 ${
+                    className={`w-full h-full absolute inset-0 bg-brand03/55 transition-opacity duration-500 ${
                       hoverIndex !== index
                         ? "opacity-80 backdrop-blur-md"
-                        : "opacity-70"
+                        : "opacity-70 bg-brand03/70"
                     }`}
                   ></div>
                 </div>
@@ -174,7 +173,7 @@ export default function Home() {
                   <div
                     className={`${
                       dmSans.className
-                    } text-neutral01/90 overflow-hidden text-center transition-all duration-500 ease-in-out max-w-xl ${
+                    } text-neutral01 overflow-hidden text-center transition-all duration-500 ease-in-out max-w-xl ${
                       hoverIndex === index
                         ? "max-h-56 opacity-100 mt-6"
                         : "max-h-0 opacity-0 mt-0"
