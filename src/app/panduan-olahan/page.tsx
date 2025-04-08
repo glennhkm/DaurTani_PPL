@@ -5,10 +5,11 @@ import React, { useState } from "react";
 import AISection from "./AISection";
 import ArticleVideoSection from "./articleVideoSection";
 import { Leaf, BookOpen, Bot } from "lucide-react";
+import Image from "next/image";
 
 const Panduan = () => {
   const [activeMenu, setActiveMenu] = useState("ar/vid");
-  
+
   const panduanMenu = [
     {
       id: "ar/vid",
@@ -30,42 +31,57 @@ const Panduan = () => {
   };
 
   return (
-    <div className="flex flex-col gap-12 lg:py-24 px-4 sm:px-6 lg:px-20 min-h-screen bg-gradient-to-b from-neutral01 to-brand01/5">
-      <div className={`transition-all duration-300`}>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-8 rounded-full bg-brand01 flex items-center justify-center">
-            <Leaf size={20} className="text-neutral01" />
-          </div>
-          <h2 className={`text-4xl sm:text-5xl text-brand03 ${dmSerifDisplay.className}`}>
-            Panduan Pengolahan Limbah Pertanian
-          </h2>
+    <div className="flex flex-col min-h-screen ">
+      <div
+        className={`transition-all duration-300 relative px-4 lg:pt-24 flex flex-col gap-6 items-center justify-center h-[60vh] md:h-[70vh]`}
+      >
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src="/images/bgHero.webp"
+            alt="Background pertanian"
+            fill
+            className="object-cover "
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-brand03/60 to-brand03/85 backdrop-blur-sm" />
         </div>
-        
-        <p className="text-brand03/70 max-w-2xl mb-10 text-lg">
-          Temukan berbagai artikel, video, dan jawaban AI tentang cara mengelola limbah pertanian secara berkelanjutan dan menguntungkan.
+        <div className="absolute top-0 left-0 w-full h-full opacity-20 -z-[9]">
+          <div className="absolute top-20 left-[10%] w-32 h-32 rounded-full bg-brand01 blur-3xl"></div>
+          <div className="absolute bottom-20 right-[10%] w-40 h-40 rounded-full bg-brand02 blur-3xl"></div>
+        </div>
+        <h2
+          className={`sm:text-5xl text-neutral01 text-4xl md:text-6xl max-w-2xl text-center ${dmSerifDisplay.className}`}
+        >
+          Panduan Pengolahan <span className="text-brand02">Limbah</span>{" "}
+          Pertanian
+        </h2>
+
+        <p className="text-neutral01/80 mt-2 max-w-2xl mb-10 text-lg text-center">
+          Temukan berbagai artikel, video, dan jawaban AI tentang cara mengelola
+          limbah pertanian secara berkelanjutan dan menguntungkan.
         </p>
-        
-        <div className="w-full flex justify-between bg-neutral01/80 rounded-t-2xl shadow-md overflow-hidden">
-          {panduanMenu.map((item, index) => {
-            return (
-              <button
-                key={index}
-                onClick={() => setActiveMenu(item.id)}
-                className={`${
-                  item.id === activeMenu
-                    ? "bg-brand01 text-neutral01 hover:bg-brand01 font-semibold"
-                    : "hover:bg-brand01/20 text-brand03 hover:font-semibold"
-                } text-center duration-200 cursor-pointer py-4 w-full rounded-t-2xl flex items-center justify-center gap-2`}
-              >
-                {item.icon}
-                {item.name}
-              </button>
-            );
-          })}
+        <div className="sm:px-6 lg:px-20 absolute -bottom-0 w-full"  >
+          <div className="w-full flex justify-between bg-neutral01/10 backdrop-blur-md border-2 border-brand02/20 border-b-0 rounded-t-2xl shadow-md overflow-hidden">
+            {panduanMenu.map((item, index) => {
+              return (
+                <button
+                  key={index}
+                  onClick={() => setActiveMenu(item.id)}
+                  className={`${
+                    item.id === activeMenu
+                      ? "bg-brand02 hover:bg-brand02 font-semibold"
+                      : "hover:bg-brand02/20 hover:font-semibold"
+                  } text-center duration-200 cursor-pointer py-4 w-full flex items-center justify-center gap-2 text-neutral01`}
+                >
+                  {item.icon}
+                  {item.name}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
-      
-      <div className="bg-neutral01/60 p-6 rounded-2xl shadow-md border border-brand01/10">
+      <div className="sm:px-6 lg:px-20 bg-gradient-to-b from-brand02/20 via-neutral01 to-neutral01 py-12">
         {showActiveSectionComponent()}
       </div>
     </div>
