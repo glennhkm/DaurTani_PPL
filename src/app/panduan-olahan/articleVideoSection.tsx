@@ -101,8 +101,8 @@ const ArticleVideoSection = () => {
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 text-brand01 hover:text-brand01/80 transition-colors"
           >
-            <SlidersHorizontal size={16} />
-            <span className="text-sm">{showFilters ? "Sembunyikan Filter" : "Tampilkan Filter"}</span>
+            <SlidersHorizontal size={16} className="text-brand03" />
+            <span className="text-sm text-brand03">{showFilters ? "Sembunyikan Filter" : "Tampilkan Filter"}</span>
           </button>
         </div>
 
