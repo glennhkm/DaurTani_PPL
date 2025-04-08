@@ -149,14 +149,14 @@ export default function Marketplace() {
         </div>
       </div>
       <div className="bg-gradient-to-b from-brand02/20 via-neutral01 to-neutral01 py-16 md:pb-20 pt-36 relative">
-        <div className="max-w-6xl mx-auto absolute left-1/2 -translate-x-1/2 -top-[4.5rem]">
-          <div className="bg-neutral01 rounded-2xl p-6 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="w-full md:w-auto mx-auto absolute left-1/2 -translate-x-1/2 -top-[2rem] lg:-top-[4.5rem]">
+          <div className="bg-neutral01 rounded-2xl p-2 lg:p-6 shadow-xl grid grid-cols-4 gap-4 md:gap-6">
             {statsData.map((item, index) => (
               <StatCard key={index} number={item.number} label={item.label} />
             ))}
           </div>
         </div>
-        <div className="max-w-6xl mx-auto px-4 md:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-20">
           <div className="text-center mb-10">
             <h2
               className={`text-3xl font-bold text-brand03 ${dmSerifDisplay.className}`}
@@ -170,7 +170,7 @@ export default function Marketplace() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
             {productsData.map((item, index) => (
               <ProductCard
                 key={index}
@@ -194,7 +194,7 @@ export default function Marketplace() {
         </div>
       </div>
       <div className="py-16 md:py-20 bg-brand01">
-        <div className="max-w-6xl mx-auto px-4 md:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-20">
           <div className="text-center mb-12">
             <h2
               className={`text-3xl font-bold text-neutral01 ${dmSerifDisplay.className}`}
