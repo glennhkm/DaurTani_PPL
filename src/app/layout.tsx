@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body className={`${dmSans.className} bg-neutral01`}>
+      <body className={`${dmSans.className} bg-neutral01 overflow-x-hidden`}>
         <Navbar />
         {children}
         <Footer />
