@@ -23,7 +23,7 @@ export default function Home() {
       judul: "Panduan Pengolahan Limbah Pertanian",
       bg_url: "/images/bgHero.webp",
       deskripsi:
-        "Temukan berbagai artikel, video tutorial, dan panduan praktis untuk mengolah limbah pertanian menjadi produk yang bermanfaat seperti kompos, pakan ternak, atau biogas. Fitur ini juga dilengkapi dengan AI Assistant berbasis LLM (Large Language Model) yang siap menjawab pertanyaan Anda secara langsung—memberikan referensi pengolahan limbah sesuai kebutuhan Anda. Belajar jadi lebih mudah, cepat, dan tepat sasaran.",
+        "Temukan berbagai artikel, video tutorial, dan panduan praktis untuk mengolah limbah pertanian menjadi produk yang bermanfaat seperti kompos, pakan ternak, atau biogas. Fitur ini juga dilengkapi dengan AI Assistant berbasis LLM (Large Language Model) yang siap menjawab pertanyaan Anda secara langsung, memberikan referensi pengolahan limbah sesuai kebutuhan Anda. Belajar jadi lebih mudah, cepat, dan tepat sasaran.",
       url: "/panduan-pengolahan",
     },
     {
@@ -38,7 +38,7 @@ export default function Home() {
   return (
     <main>
       <section className="min-h-screen bg-gradient-to-b from-neutral01 to-white flex relative overflow-hidden">
-        <div className="w-screen h-screen absolute inset-0 bg-brand03/55 backdrop-blur-md z-10"></div>
+        {/* <div className="w-screen h-screen absolute inset-0 bg-brand03/55 backdrop-blur-md z-10"></div> */}
         <div className="absolute inset-0 before:absolute before:inset-0">
           <Image
             src="/images/imageHero.png"
@@ -46,6 +46,7 @@ export default function Home() {
             fill
             className="object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-brand03/60 to-brand03/85 backdrop-blur-sm" />
         </div>
         <div className="absolute w-[50%] h-[1px] bg-neutral01/20 z-20 left-1/2 top-1/2 -translate-x-1/2 -rotate-45"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-20 flex flex-col justify-between py-12 md:py-16 h-screen">
@@ -75,7 +76,7 @@ export default function Home() {
             <div className="flex gap-4">
               <Link
                 href="/register"
-                className={`bg-brand01 text-white px-8 py-3 font-medium hover:bg-brand01/90 transition-colors ${dmSerifDisplay.className}`}
+                className={`bg-brand01 text-white px-8 py-3 font-medium hover:bg-brand01/90 transition-colors rounded-lg ${dmSerifDisplay.className}`}
               >
                 Mulai Sekarang
                 <ArrowRight className="inline-block ml-2" size={20} />
@@ -84,7 +85,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col gap-6 max-w-xl self-end pb-8 md:pb-16">
-            <h2 className={`${dmSerifDisplay.className} text-brand01 text-4xl`}>
+            <h2 className={`${dmSerifDisplay.className} text-brand02 text-4xl`}>
               Tentang Kami
             </h2>
             <p className="text-neutral01">
@@ -200,7 +201,7 @@ export default function Home() {
           </p>
           <Link
             href="/register"
-            className={`bg-neutral01 text-brand01 px-8 py-3 shadow-lg font-medium hover:opacity-90 duration-200 transition-colors inline-flex items-center ${dmSerifDisplay.className}`}
+            className={`bg-neutral01 text-brand01 px-8 py-3 shadow-lg font-medium hover:opacity-90 duration-200 transition-colors inline-flex items-center rounded-lg ${dmSerifDisplay.className}`}
           >
             Daftar Gratis
             <ArrowRight className="ml-2" size={20} />
