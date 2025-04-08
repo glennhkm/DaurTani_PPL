@@ -7,7 +7,15 @@ import { dmSans } from '@/components/fonts/dmSans'
 export const metadata: Metadata = {
   title: 'DaurTani - Solusi Daur Ulang Limbah Pertanian',
   description: 'Platform marketplace dan komunitas untuk daur ulang limbah pertanian berkelanjutan',
-}
+  verification: {
+    google: "BdfghLWZfCIxNl4X6PcZi-S5sNLuhijwfQgY_Ui8agA"
+  },
+  icons: {
+    icon: ['/favicon.ico?v=4'],
+    apple: ['/apple-touch-icon.png?v=4'],
+    shortcut: ['apple-touch-icon.png']
+  }
+} as const;
 
 export default function RootLayout({
   children,
