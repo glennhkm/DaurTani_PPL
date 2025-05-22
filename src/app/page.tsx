@@ -7,10 +7,16 @@ import { MainLogo } from "@/components/iconAndLogo/mainLogo";
 import { Typewriter } from "react-simple-typewriter";
 import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
 import { dmSans } from "@/components/fonts/dmSans";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Home() {
   const [hoverIndex, setHoverIndex] = useState<Number | null>(null);
+  const [circleHoverIndex, setCircleHoverIndex] = useState<Number | null>(null);
+  const [activeCategory, setActiveCategory] = useState<Number | null>(null);
+  const sumberRef = useRef<HTMLDivElement>(null);
+  const waktuRef = useRef<HTMLDivElement>(null);
+  const wujudRef = useRef<HTMLDivElement>(null);
+
   const products = [
     {
       judul: "Marketplace Limbah Pertanian",
@@ -24,7 +30,7 @@ export default function Home() {
       bg_url: "/images/bgHero.webp",
       deskripsi:
         "Temukan berbagai artikel, video tutorial, dan panduan praktis untuk mengolah limbah pertanian menjadi produk yang bermanfaat seperti kompos, pakan ternak, atau biogas. Fitur ini juga dilengkapi dengan AI Assistant berbasis LLM (Large Language Model) yang siap menjawab pertanyaan Anda secara langsung, memberikan referensi pengolahan limbah sesuai kebutuhan Anda. Belajar jadi lebih mudah, cepat, dan tepat sasaran.",
-      url: "/panduan-pengolahan",
+      url: "/panduan-olahan",
     },
     {
       judul: "Kolaborasi Komunitas",
@@ -35,10 +41,56 @@ export default function Home() {
     },
   ];
 
+  const wasteCategories = [
+    {
+      title: "Sumber",
+      icon: "/images/sayuran.jpg",
+      description: "Limbah berdasarkan sumbernya berasal dari tanaman pangan, hortikultura, perkebunan, peternakan, atau perkotaan.",
+      ref: sumberRef,
+      details: [
+        "<strong>Tanaman Pangan</strong>: Sekam padi, jerami, tongkol jagung dapat diolah menjadi pupuk organik atau pembungkus makanan tradisional.",
+        "<strong>Hortikultura</strong>: Sisa sayuran (daun bawang, kubis) atau buah rusak dapat menjadi pakan ternak atau kompos.",
+        "<strong>Perkebunan</strong>: Sabut kelapa diolah menjadi kerajinan (keset, tali) atau arang; limbah kelapa sawit menjadi pupuk.",
+        "<strong>Peternakan</strong>: Kotoran sapi, ayam, atau kambing diolah menjadi pupuk kandang atau biogas.",
+        "<strong>Perkotaan</strong>: Sisa organik dari pasar (sayuran) dapat diolah menjadi pupuk atau bioenergi.",
+      ],
+    },
+    {
+      title: "Waktu",
+      icon: "/images/panen.jpg",
+      description: "Limbah muncul pada tahap prapanen, saat panen, atau pascapanen dalam siklus pertanian.",
+      ref: waktuRef,
+      details: [
+        "<strong>Prapanen</strong>: Gulma, daun, atau kotoran ternak yang dapat diolah menjadi kompos atau pakan ternak.",
+        "<strong>Saat Panen</strong>: Jerami padi, pelepah pisang, atau daun sorgum yang cocok untuk pakan ternak atau kompos.",
+        "<strong>Pascapanen</strong>: Sekam padi, sabut kelapa, atau ampas tahu yang dapat digunakan untuk pupuk, biogas, atau kerajinan.",
+      ],
+    },
+    {
+      title: "Wujud",
+      icon: "/images/jerami.jpg",
+      description: "Limbah dapat berwujud padat (jerami), cair (air irigasi), atau gas (metana dari kotoran ternak).",
+      ref: wujudRef,
+      details: [
+        "<strong>Padat</strong>: Tempurung kelapa, jerami, atau ampas tahu dapat diolah menjadi kompos, pakan ternak, atau kerajinan.",
+        "<strong>Cair</strong>: Air limbah irigasi atau pencucian hasil panen perlu disaring untuk mencegah pencemaran air.",
+        "<strong>Gas</strong>: Emisi metana dari kotoran ternak dapat dimanfaatkan sebagai biogas atau disalurkan melalui filter.",
+      ],
+    },
+  ];
+
+  const handleScrollToSection = (ref: React.RefObject<HTMLDivElement>, index: number) => {
+    setActiveCategory(index);
+    if (ref.current) {
+      const offsetTop = ref.current.getBoundingClientRect().top + window.scrollY;
+      const middleOfScreen = offsetTop - (window.innerHeight / 2) + (ref.current.offsetHeight / 2);
+      window.scrollTo({ top: middleOfScreen, behavior: "smooth" });
+    }
+  };
+
   return (
     <main>
       <section className="min-h-screen bg-gradient-to-b from-neutral01 to-white flex relative overflow-hidden">
-        {/* <div className="w-screen h-screen absolute inset-0 bg-brand03/55 backdrop-blur-md z-10"></div> */}
         <div className="absolute inset-0 before:absolute before:inset-0">
           <Image
             src="/images/imageHero.png"
@@ -56,11 +108,7 @@ export default function Home() {
               className={`text-4xl font-bold text-brand02 -mt-7 ${dmSerifDisplay.className}`}
             >
               <Typewriter
-                words={[
-                  "Pertanian Berkelanjutan.",
-                  "Kelola Limbah.",
-                  "Hijaukan Bumi.",
-                ]}
+                words={["Pertanian Berkelanjutan.", "Kelola Limbah.", "Hijaukan Bumi."]}
                 loop={0}
                 cursor
                 cursorStyle="|"
@@ -70,8 +118,7 @@ export default function Home() {
               />
             </h1>
             <p className="text-xl text-neutral01">
-              Mengubah limbah pertanian menjadi produk bernilai tinggi untuk
-              masa depan pertanian yang lebih berkelanjutan
+              Mengubah limbah pertanian menjadi produk bernilai tinggi untuk masa depan pertanian yang lebih berkelanjutan
             </p>
             <div className="flex gap-4">
               <Link
@@ -85,24 +132,14 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col gap-6 max-w-xl self-end pb-8 md:pb-16">
-            <h2 className={`${dmSerifDisplay.className} text-brand02 text-4xl`}>
-              Tentang Kami
-            </h2>
+            <h2 className={`${dmSerifDisplay.className} text-brand02 text-4xl`}>Tentang Kami</h2>
             <p className="text-neutral01">
-              Kami percaya bahwa pertanian berkelanjutan adalah fondasi masa
-              depan yang lebih hijau dan cerdas. Dengan semangat inovasi,
-              kolaborasi, dan kepedulian terhadap lingkungan, kami menghadirkan
-              platform yang menghubungkan petani, komunitas urban farming, dan
-              startup agritech untuk bersama-sama mengubah limbah pertanian
-              menjadi solusi bernilai ekonomi. Platform ini tidak hanya
-              berfungsi sebagai marketplace untuk jual-beli limbah seperti sekam
-              padi, kulit kopi, atau ampas tebu, tetapi juga sebagai pusat
-              edukasi untuk membantu masyarakat memahami potensi besar dari
-              setiap sisa hasil pertanian.
+              Kami percaya bahwa pertanian berkelanjutan adalah fondasi masa depan yang lebih hijau dan cerdas. Dengan semangat inovasi, kolaborasi, dan kepedulian terhadap lingkungan, kami menghadirkan platform yang menghubungkan petani, komunitas urban farming, dan startup agritech untuk bersama-sama mengubah limbah pertanian menjadi solusi bernilai ekonomi. Platform ini tidak hanya berfungsi sebagai marketplace untuk jual-beli limbah seperti sekam padi, kulit kopi, atau ampas tebu, tetapi juga sebagai pusat edukasi untuk membantu masyarakat memahami potensi besar dari setiap sisa hasil pertanian.
             </p>
           </div>
         </div>
       </section>
+
       <section className="pt-12">
         <div className="w-full mx-auto">
           <h2
@@ -138,46 +175,32 @@ export default function Home() {
                   />
                   <div
                     className={`w-full h-full absolute inset-0 bg-brand03/55 transition-opacity duration-500 ${
-                      hoverIndex !== index
-                        ? "opacity-80 backdrop-blur-md"
-                        : "opacity-70 bg-brand03/70"
+                      hoverIndex !== index ? "opacity-80 backdrop-blur-md" : "opacity-70 bg-brand03/70"
                     }`}
                   ></div>
                 </div>
 
                 <div
                   className={`bg-brand02/20 backdrop-blur-md p-4 rounded-full absolute top-4 right-4 z-40 transition-all duration-200 hover:opacity-80 shadow-lg shadow-black/50 ${
-                    hoverIndex === index
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-5 opacity-0"
+                    hoverIndex === index ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
                   }`}
                 >
-                  <ArrowRight
-                    className="text-[#d9a641]"
-                    width={30}
-                    height={30}
-                  />
+                  <ArrowRight className="text-[#d9a641]" width={30} height={30} />
                 </div>
                 <div
                   className={`w-full h-full p-6 flex flex-col items-center justify-center relative z-10 ${dmSerifDisplay.className}`}
                 >
                   <h3
                     className={`text-3xl font-semibold text-brand02 transition-all duration-500 max-w-xs break-words text-center ${
-                      hoverIndex === index
-                        ? "transform-none"
-                        : "origin-center absolute"
+                      hoverIndex === index ? "transform-none" : "origin-center absolute"
                     }`}
                   >
                     {item.judul}
                   </h3>
 
                   <div
-                    className={`${
-                      dmSans.className
-                    } text-neutral01 overflow-hidden text-center transition-all duration-500 ease-in-out max-w-xl ${
-                      hoverIndex === index
-                        ? "max-h-56 opacity-100 mt-6"
-                        : "max-h-0 opacity-0 mt-0"
+                    className={`${dmSans.className} text-neutral01 overflow-hidden text-center transition-all duration-500 ease-in-out max-w-xl ${
+                      hoverIndex === index ? "max-h-56 opacity-100 mt-6" : "max-h-0 opacity-0 mt-0"
                     }`}
                   >
                     <p>{item.deskripsi}</p>
@@ -188,16 +211,138 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <section className="py-20 bg-neutral01">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2
+            className={`text-6xl font-bold text-center text-brand03 mb-8 ${dmSerifDisplay.className}`}
+          >
+            Apa Itu Daur Ulang Limbah Pertanian?
+          </h2>
+          <p className={`text-lg text-neutral02 mb-12 text-center max-w-3xl mx-auto ${dmSans.className}`}>
+            Daur Tani adalah platform yang menjembatani petani dan pelaku industri untuk mengelola limbah pertanian, baik mentah maupun olahan, menjadi produk bernilai tinggi seperti pupuk kompos, pakan ternak, atau biogas. Proses ini mendukung ekonomi sirkular, mengurangi dampak lingkungan, dan menciptakan peluang ekonomi baru bagi petani.
+          </p>
+
+          {/* Interactive Circle Visualization */}
+          <div className="relative flex justify-center items-center mt-48 mb-48">
+            <div className="relative w-96 h-96 rounded-full bg-brand01 flex items-center justify-center">
+              <span className={`text-white text-3xl font-bold text-center ${dmSerifDisplay.className}`}>
+                Limbah Pertanian
+              </span>
+              {wasteCategories.map((category, index) => (
+                <div
+                  key={index}
+                  className={`absolute w-48 h-48 bg-brand01 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 ${
+                    circleHoverIndex === index ? "shadow-lg" : ""
+                  }`}
+                  style={{
+                    transform: `rotate(${index * 120}deg) translate(220px) rotate(-${index * 120}deg)`,
+                  }}
+                  onMouseEnter={() => setCircleHoverIndex(index)}
+                  onMouseLeave={() => setCircleHoverIndex(null)}
+                  onClick={() => handleScrollToSection(category.ref as React.RefObject<HTMLDivElement>, index)}
+                >
+                  <div className="relative w-full h-full flex flex-col items-center justify-center">
+                    <Image
+                      src={category.icon}
+                      alt={`${category.title} Icon`}
+                      fill
+                      className="rounded-full object-cover"
+                    />
+                    <div
+                      className={`absolute inset-0 bg-brand03/70 rounded-full transition-opacity duration-300 ${
+                        circleHoverIndex === index ? "opacity-100" : "opacity-0"
+                      }`}
+                    ></div>
+                    <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
+                      <span className={`text-white text-xl ${dmSerifDisplay.className}`}>
+                        {category.title}
+                      </span>
+                      <div
+                        className={`text-white text-sm text-center ${dmSans.className} overflow-hidden transition-all duration-300 max-w-[90%] ${
+                          circleHoverIndex === index ? "max-h-32 opacity-100 mt-2" : "max-h-0 opacity-0 mt-0"
+                        }`}
+                      >
+                        {category.description}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Detailed Explanation Sections */}
+          <div className="space-y-12">
+            {wasteCategories.map((category, index) => (
+              <div
+                key={index}
+                ref={category.ref}
+                className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <div className="relative w-full md:w-1/3 h-64 md:h-96 flex-shrink-0">
+                  <Image
+                    src={category.icon}
+                    alt={`${category.title} Image`}
+                    fill
+                    className="rounded-lg object-cover border-4 border-brand01/20"
+                  />
+                </div>
+                <div className="w-full md:w-2/3">
+                  <h3
+                    className={`text-4xl font-bold text-brand03 mb-4 ${dmSerifDisplay.className} bg-gradient-to-r from-brand03 to-brand01 bg-clip-text text-transparent`}
+                  >
+                    Berdasarkan {category.title}
+                  </h3>
+                  <p className={`text-lg text-neutral02 mb-6 ${dmSans.className}`}>
+                    {category.description}
+                  </p>
+                  <ul className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-neutral02 ${dmSans.className}`}>
+                    {category.details.map((detail, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-start gap-2"
+                        dangerouslySetInnerHTML={{ __html: detail }}
+                      />
+                    ))}
+                  </ul>
+                  <Link
+                    href="/panduan-olahan"
+                    className={`mt-6 inline-flex items-center px-6 py-3 bg-brand01 text-white rounded-lg shadow-md hover:bg-brand01/90 hover:scale-105 transition-all duration-200 ${dmSans.className}`}
+                  >
+                    Pelajari Cara Mengolah
+                    <ArrowRight className="ml-2" size={20} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <style jsx>{`
+          .space-y-12 > div {
+            animation: fadeInUp 0.6s ease-out forwards;
+          }
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
+      </section>
+
       <section className="bg-brand01 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className={`text-3xl font-bold text-white mb-4 ${dmSerifDisplay.className}`}
-          >
+          <h2 className={`text-3xl font-bold text-white mb-4 ${dmSerifDisplay.className}`}>
             Bergabung Sekarang
           </h2>
           <p className="text-white/90 mb-8 max-w-2xl mx-auto">
-            Jadilah bagian dari gerakan pertanian berkelanjutan. Mulai daur
-            ulang limbah pertanian Anda hari ini.
+            Jadilah bagian dari gerakan pertanian berkelanjutan. Mulai daur ulang limbah pertanian Anda hari ini.
           </p>
           <Link
             href="/register"
