@@ -1,14 +1,28 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import Image from "next/image";
-import { Search, Star, Users, TrendingUp } from "lucide-react";
-import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
 import {
-  TestimonialCard,
-  TestimonialCardProps,
-} from "@/components/cards/testimonialCard";
+  Star,
+  Users,
+  TrendingUp,
+  Search,
+  Filter,
+  ArrowUpDown,
+  MapPin,
+  Package,
+} from "lucide-react";
+import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
 import { ProductCard, ProductCardProps } from "@/components/cards/productCard";
 import { StatCard, StatCardProps } from "@/components/cards/statCard";
 
 export default function Marketplace() {
+  const [tempQuery, setTempQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [sortBy, setSortBy] = useState("featured"); // featured, price-low, price-high, rating, stock
+  const [showFilters, setShowFilters] = useState(false);
+
   const keyBenefitsData = [
     {
       icon: <Users size={16} />,
@@ -23,6 +37,7 @@ export default function Marketplace() {
       text: "Harga Terbaik",
     },
   ];
+
   const statsData: StatCardProps[] = [
     {
       number: "10K+",
@@ -41,6 +56,7 @@ export default function Marketplace() {
       label: "Provinsi Terjangkau",
     },
   ];
+
   const productsData: ProductCardProps[] = [
     {
       image: "/images/ampasTebu.png",
@@ -70,30 +86,90 @@ export default function Marketplace() {
       location: "Lampung",
       stock: 500,
     },
-  ];
-  const testimonialsData: TestimonialCardProps[] = [
     {
-      quote:
-        "Platform ini sangat membantu bisnis saya untuk mendapatkan limbah ampas tebu berkualitas dengan harga terjangkau.",
-      name: "Ahmad Sulaiman",
-      role: "Pemilik Pabrik Bioethanol",
-      rating: 5,
+      image: "/images/ampasTebu.png",
+      title: "Serbuk Gergaji Halus",
+      description: "Limbah kayu berkualitas untuk media tanam",
+      price: "Rp 1.800/kg",
+      rating: 4.6,
+      location: "Jawa Tengah",
+      stock: 200,
     },
     {
-      quote:
-        "Saya bisa menjual limbah pertanian saya dengan harga lebih baik dibandingkan dijual ke pengepul tradisional.",
-      name: "Siti Rahayu",
-      role: "Petani Tebu",
+      image: "/images/ampasTebu.png",
+      title: "Sekam Padi Premium",
+      description: "Sekam padi pilihan untuk pupuk dan media tanam",
+      price: "Rp 1.200/kg",
       rating: 4.5,
+      location: "Jawa Barat",
+      stock: 450,
     },
     {
-      quote:
-        "Kualitas produk yang saya dapatkan selalu konsisten dan sesuai dengan deskripsi yang diberikan penjual.",
-      name: "Budi Santoso",
-      role: "Produsen Pupuk Organik",
-      rating: 5,
+      image: "/images/ampasTebu.png",
+      title: "Kulit Kacang Tanah",
+      description: "Limbah kulit kacang untuk pakan ternak berkualitas",
+      price: "Rp 2.800/kg",
+      rating: 4.8,
+      location: "Jawa Timur",
+      stock: 180,
     },
   ];
+
+  // Get unique locations for filter
+  const locations = [
+    ...new Set(productsData.map((product) => product.location)),
+  ];
+
+  // Extract price number for sorting
+  const extractPrice = (priceStr: string) => {
+    return parseInt(priceStr.replace(/[^\d]/g, ""));
+  };
+
+  // Filter and sort products
+  const filteredAndSortedProducts = useMemo(() => {
+    let filtered = productsData.filter((product) => {
+      const matchesSearch =
+        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesLocation =
+        !selectedLocation || product.location === selectedLocation;
+
+      return matchesSearch && matchesLocation;
+    });
+
+    // Sort products
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "price-low":
+          return extractPrice(a.price) - extractPrice(b.price);
+        case "price-high":
+          return extractPrice(b.price) - extractPrice(a.price);
+        case "rating":
+          return b.rating - a.rating;
+        case "stock":
+          return b.stock - a.stock;
+        case "featured":
+        default:
+          // Featured items first, then by rating
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return b.rating - a.rating;
+      }
+    });
+
+    return filtered;
+  }, [searchQuery, selectedLocation, sortBy]);
+
+  const getSortLabel = (value: string) => {
+    const labels = {
+      featured: "Unggulan",
+      "price-low": "Harga Terendah",
+      "price-high": "Harga Tertinggi",
+      rating: "Rating Tertinggi",
+      stock: "Stok Terbanyak",
+    };
+    return labels[value as keyof typeof labels] || "Unggulan";
+  };
 
   return (
     <div className="min-h-screen bg-neutral01">
@@ -122,22 +198,6 @@ export default function Marketplace() {
             Platform terpercaya untuk menjual dan membeli limbah pertanian
             berkualitas untuk kebutuhan industri dan pertanian berkelanjutan
           </p>
-          <div className="flex max-w-lg mx-auto">
-            <div className="relative flex-grow bg-white/10 backdrop-blur-lg rounded-l-2xl border border-white/20 shadow-2xl shadow-brand03/30">
-              <Search
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral01/70"
-                size={20}
-              />
-              <input
-                type="text"
-                placeholder="Mau cari apa?"
-                className="w-full py-4 px-12 bg-transparent border-0 focus:outline-none text-neutral01 placeholder:text-neutral01/50"
-              />
-            </div>
-            <button className="bg-brand02 cursor-pointer hover:bg-brand02/90 text-neutral01 px-8 py-4 rounded-r-2xl transition-all duration-300 font-medium shadow-lg shadow-brand02/30 hover:shadow-xl hover:shadow-brand02/40">
-              Cari
-            </button>
-          </div>
           <div className="flex flex-wrap justify-center gap-6 mt-10 text-neutral01/90">
             {keyBenefitsData.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
@@ -148,7 +208,8 @@ export default function Marketplace() {
           </div>
         </div>
       </div>
-      <div className="bg-gradient-to-b from-brand02/20 via-neutral01 to-neutral01 py-16 md:pb-20 pt-36 relative">
+
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-20 py-16 md:pb-20 pt-16 relative">
         <div className="w-full md:w-auto mx-auto absolute left-1/2 -translate-x-1/2 -top-[2rem] lg:-top-[4.5rem]">
           <div className="bg-neutral01 rounded-2xl p-2 lg:p-6 shadow-xl grid grid-cols-4 gap-4 md:gap-6">
             {statsData.map((item, index) => (
@@ -156,24 +217,116 @@ export default function Marketplace() {
             ))}
           </div>
         </div>
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="text-center mb-10">
-            <h2
-              className={`text-3xl font-bold text-brand03 ${dmSerifDisplay.className}`}
-            >
-              Produk Unggulan
-            </h2>
-            <div className="h-1 w-24 bg-brand02 mx-auto mt-4 mb-4 rounded-full"></div>
-            <p className="text-brand03/80 max-w-2xl mx-auto">
-              Produk-produk limbah pertanian terbaik dengan kualitas premium
-              yang siap digunakan untuk berbagai kebutuhan
-            </p>
+        {/* Search and Filter Section */}
+        <div className="mb-12 mt-16 space-y-6">
+          {/* Search, Filter and Sort Controls */}
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+            {/* Search Bar */}
+            <div className="relative flex-1 order-3 lg:order-1 w-full">
+              <div className="relative flex">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-brand03/60 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Cari produk limbah pertanian..."
+                  value={tempQuery}
+                  onChange={(e) => setTempQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      setSearchQuery(tempQuery.trim());
+                    }
+                  }}
+                  className="flex-1 pl-12 pr-16 py-3 rounded-2xl border border-brand03/20 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 bg-neutral01 text-brand03 placeholder-brand03/60 shadow-sm"
+                />
+                <button
+                  onClick={() => {
+                  }}
+                  className="absolute h-full right-0 bg-brand01 hover:bg-brand01/90 text-neutral01 px-8 py-1.5 rounded-r-2xl transition-all duration-300 text-sm font-medium"
+                >
+                  Cari
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Controls */}
+            <div className="flex gap-3 order-2 lg:order-2">
+              {/* Location Filter */}
+              <div className="relative">
+                <select
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  className="appearance-none bg-neutral01 border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm"
+                >
+                  <option value="">Semua Lokasi</option>
+                  {locations.map((location) => (
+                    <option key={location} value={location}>
+                      {location}
+                    </option>
+                  ))}
+                </select>
+                <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
+              </div>
+
+              {/* Toggle Filters Button */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-4 py-3 rounded-2xl border transition-all duration-300 ${
+                  showFilters
+                    ? "bg-brand01 text-neutral01 border-brand01"
+                    : "bg-neutral01 text-brand03 border-brand03/20 hover:border-brand01"
+                }`}
+              >
+                <Filter className="w-4 h-4" />
+                <span className="text-sm font-medium">Filter</span>
+              </button>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="relative order-1 lg:order-3">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="appearance-none bg-neutral01 border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm min-w-[160px]"
+              >
+                <option value="featured">Unggulan</option>
+                <option value="price-low">Harga Terendah</option>
+                <option value="price-high">Harga Tertinggi</option>
+                <option value="rating">Rating Tertinggi</option>
+                <option value="stock">Stok Terbanyak</option>
+              </select>
+              <ArrowUpDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
+            </div>
           </div>
 
+          {/* Results Summary */}
+          <div className="flex items-center justify-between text-sm text-brand03/70">
+            <div className="flex items-center gap-2">
+              <Package className="w-4 h-4" />
+              <span>
+                Menampilkan {filteredAndSortedProducts.length} dari{" "}
+                {productsData.length} produk
+              </span>
+            </div>
+            {(searchQuery || selectedLocation) && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedLocation("");
+                }}
+                className="text-brand01 hover:text-brand01/80 font-medium transition-colors duration-300"
+              >
+                Reset Filter
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        {filteredAndSortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-            {productsData.map((item, index) => (
+            {filteredAndSortedProducts.map((item, index) => (
               <ProductCard
-                key={index}
+                key={`${item.title}-${index}`}
                 image={item.image}
                 title={item.title}
                 description={item.description}
@@ -185,39 +338,30 @@ export default function Marketplace() {
               />
             ))}
           </div>
-
-          <div className="text-center mt-12">
-            <button className="bg-brand01 hover:bg-brand01/90 text-neutral01 px-8 py-3 cursor-pointer rounded-lg transition-all duration-300 font-medium shadow-md hover:shadow-lg">
-              Lihat Semua Produk
-            </button>
+        ) : (
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-brand03/10 flex items-center justify-center">
+                <Search className="w-8 h-8 text-brand03/40" />
+              </div>
+              <h3 className="text-xl font-semibold text-brand03 mb-2">
+                Produk Tidak Ditemukan
+              </h3>
+              <p className="text-brand03/70 mb-6">
+                Coba ubah kata kunci pencarian atau filter yang Anda gunakan
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedLocation("");
+                }}
+                className="bg-brand01 hover:bg-brand01/90 text-neutral01 px-6 py-2.5 rounded-2xl transition-all duration-300 font-medium"
+              >
+                Reset Pencarian
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="py-16 md:py-20 bg-brand01">
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="text-center mb-12">
-            <h2
-              className={`text-3xl font-bold text-neutral01 ${dmSerifDisplay.className}`}
-            >
-              Testimoni Pengguna
-            </h2>
-            <p className="mt-3 max-w-2xl mx-auto text-neutral01/80">
-              Apa kata mereka yang telah menggunakan platform kami
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonialsData.map((item, index) => (
-              <TestimonialCard
-                key={index}
-                quote={item.quote}
-                name={item.name}
-                role={item.role}
-                rating={item.rating}
-              />
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

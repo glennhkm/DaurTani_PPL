@@ -1,5 +1,7 @@
-import { MapPin, Star } from "lucide-react";
+import { ArrowRight, MapPin, Package, Star } from "lucide-react";
 import Image from "next/image";
+import { dmSans } from "../fonts/dmSans";
+import { dmSerifDisplay } from "../fonts/dmSerifDisplay";
 
 export interface ProductCardProps {
   image: string;
@@ -24,44 +26,61 @@ export const ProductCard = ({
 }: ProductCardProps) => {
   return (
     <div
-      className={`bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
-        featured ? "ring-2 ring-brand02" : ""
-      }`}
+      className="group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-slate-100 hover:scale-105"
     >
-      {featured && (
-        <div className="absolute top-4 right-4 z-10 bg-brand03 text-neutral01 text-xs font-medium px-2 py-1 rounded-full">
-          Terlaris
+      <div className="relative h-64 overflow-hidden">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover group-hover:scale-110 transition-transform duration-700"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+        {featured && (
+          <div className="absolute top-4 left-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+            <Star size={14} fill="currentColor" />
+            Featured
+          </div>
+        )}
+
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+          <ArrowRight size={16} className="text-brand01" />
         </div>
-      )}
-      <div className="h-56 relative">
-        <Image src={image} alt={title} fill className="object-cover" />
       </div>
-      <div className="p-6 h-64 flex flex-col justify-end">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-bold text-lg text-brand03">{title}</h3>
-          <div className="flex items-center text-brand02">
-            <Star size={16} className="fill-brand02" />
-            <span className="text-sm ml-1">{rating}</span>
+
+      <div className="p-6">
+        <h3
+          className={`text-xl font-bold text-slate-800 mb-2 ${dmSerifDisplay.className}`}
+        >
+          {title}
+        </h3>
+        <p className={`text-slate-600 mb-4 text-sm ${dmSans.className}`}>
+          {description}
+        </p>
+
+        <div className="flex items-center justify-between mb-4">
+          <span
+            className={`text-2xl font-bold text-brand01 ${dmSerifDisplay.className}`}
+          >
+            {price}
+          </span>
+          <div className="flex items-center gap-1">
+            <Star size={16} className="text-amber-400" fill="currentColor" />
+            <span className="text-slate-600 font-medium">{rating}</span>
           </div>
         </div>
-        <p className="text-gray-600 text-sm mb-3">{description}</p>
 
-        <div className="flex items-center text-gray-500 text-xs mb-4">
-          <MapPin size={14} className="mr-1" />
-          <span>{location}</span>
-          <div className="w-1 h-1 rounded-full bg-gray-300 mx-2"></div>
-          <span>Stok: {stock} kg</span>
-        </div>
-
-        <div className="flex justify-between items-center mb-4">
-          <p className="font-bold text-lg text-brand03">{price}</p>
-          <div className="text-xs px-2 py-1 bg-brand01/10 text-brand01 rounded-full">
-            Tersedia
+        <div className="flex items-center justify-between text-sm text-slate-500">
+          <div className="flex items-center gap-1">
+            <MapPin size={14} />
+            {location}
+          </div>
+          <div className="flex items-center gap-1">
+            <Package size={14} />
+            {stock} tersedia
           </div>
         </div>
-        <button className="bg-brand02 hover:bg-brand02/90 text-neutral01 py-2 rounded-lg text-sm transition-all duration-300 font-medium cursor-pointer">
-          Beli
-        </button>
       </div>
     </div>
   );
