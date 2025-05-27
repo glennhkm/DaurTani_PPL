@@ -206,7 +206,7 @@ export default function Home() {
       </section>
 
       {/* About Section - Enhanced with modern gradient and animations */}
-      <section className="py-32 bg-gradient-to-br from-brand03/20 via-neutral01 to-brand01/60 relative overflow-hidden border-t-4 border-brand01/60">
+      <section className="py-32 bg-gradient-to-br from-brand03/20 via-neutral01 to-brand01/60 relative overflow-hidden border-t-[6px] border-brand01/60">
         {/* Background decorative elements */}
         <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-brand01/10 to-transparent rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-emerald-500/10 to-transparent rounded-full blur-3xl"></div>
@@ -354,7 +354,7 @@ export default function Home() {
       </section>
 
       {/* Enhanced Marketplace Section */}
-      <section className="py-32 bg-gradient-to-bl from-brand01/60 via-neutral01 to-teal-50 relative overflow-hidden border-t-4 border-brand01/40">
+      <section className="py-32 bg-gradient-to-bl from-brand01/60 via-neutral01 to-teal-50 relative overflow-hidden border-t-[6px] border-brand01/40">
         {/* Background patterns */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 left-10 w-32 h-32 bg-brand01 rounded-full"></div>
@@ -437,7 +437,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="pt-0 border-b-4 border-brand01/60">
+      <section className="pt-0 border-b-[6px] border-brand01/60">
         <div className="w-full mx-auto">
           {/* <h2
             className={`text-6xl font-bold text-center text-brand03 mb-12 ${dmSerifDisplay.className}`}
