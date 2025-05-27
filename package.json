@@ -1,5 +1,5 @@
 {
-  "name": "daurtani",
+  "name": "testing_app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,25 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "lucide-react": "^0.487.0",
-    "mongodb": "^6.3.0",
-    "mongoose": "^8.1.0",
-    "next": "14.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "lucide-react": "^0.511.0",
+    "next": "15.3.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-simple-typewriter": "^5.0.1"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.5",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "postcss": "^8",
-    "tailwindcss": "^4.1.7",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
     "typescript": "^5"
   }
 }
