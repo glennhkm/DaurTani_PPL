@@ -12,7 +12,7 @@ export const Footer = () => {
   }
 
   return (
-    <footer className="bg-[#F9F5EC] border-t border-brand01/20">
+    <footer className="bg-gradient-to-bl from-neutral01 via-neutral01 to-brand01/40 border-t border-brand01/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
