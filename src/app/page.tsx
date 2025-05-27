@@ -132,7 +132,7 @@ export default function Home() {
         ref.current.getBoundingClientRect().top + window.scrollY;
       const middleOfScreen =
         offsetTop - window.innerHeight / 2 + ref.current.offsetHeight / 2;
-      window.scrollTo({ top: middleOfScreen, behavior: "smooth" });
+      window.scrollTo({ top: middleOfScreen - 150, behavior: "smooth" });
     }
   };
 
@@ -214,7 +214,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-20">
             <h2
-              className={`text-7xl font-bold bg-brand01 bg-clip-text text-transparent mb-8 ${dmSerifDisplay.className}`}
+              className={`text-7xl font-bold bg-gradient-to-r from-brand01 via-brand01 to-brand02 bg-clip-text text-transparent mb-8 ${dmSerifDisplay.className}`}
             >
               Apa Itu DaurTani?
             </h2>
