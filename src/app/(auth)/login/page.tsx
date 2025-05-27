@@ -29,22 +29,22 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // const res = await fetch("/api/auth/login", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(formData),
+      // });
 
-      const data = await res.json();
+      // const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || "Login failed");
-      }
+      // if (!res.ok) {
+      //   throw new Error(data.error || "Login failed");
+      // }
 
-      // Login menggunakan AuthContext
-      login(data.token, data.user);
+      // // Login menggunakan AuthContext
+      // login(data.token, data.user);
       
       // Redirect ke home page
       router.push("/");
