@@ -24,13 +24,13 @@ export default function Home() {
   }, []);
 
   const products = [
-    {
-      judul: "Marketplace Limbah Pertanian",
-      bg_url: "/images/marketplace.jpg",
-      deskripsi:
-        "Jelajahi tempat jual-beli limbah pertanian seperti ampas tebu, sekam padi, hingga kulit kopi. Fitur ini menghubungkan petani, komunitas, dan pelaku industri yang membutuhkan bahan baku ramah lingkungan. Dengan kategori limbah, pencarian cepat, dan notifikasi permintaan terbaru, marketplace ini mempermudah transaksi secara efisien dan transparan, mendukung ekonomi sirkular di sektor pertanian.",
-      url: "/marketplace",
-    },
+    // {
+    //   judul: "Marketplace Limbah Pertanian",
+    //   bg_url: "/images/marketplace.jpg",
+    //   deskripsi:
+    //     "Jelajahi tempat jual-beli limbah pertanian seperti ampas tebu, sekam padi, hingga kulit kopi. Fitur ini menghubungkan petani, komunitas, dan pelaku industri yang membutuhkan bahan baku ramah lingkungan. Dengan kategori limbah, pencarian cepat, dan notifikasi permintaan terbaru, marketplace ini mempermudah transaksi secara efisien dan transparan, mendukung ekonomi sirkular di sektor pertanian.",
+    //   url: "/marketplace",
+    // },
     {
       judul: "Panduan Pengolahan Limbah Pertanian",
       bg_url: "/images/bgHero.webp",
@@ -132,7 +132,7 @@ export default function Home() {
         ref.current.getBoundingClientRect().top + window.scrollY;
       const middleOfScreen =
         offsetTop - window.innerHeight / 2 + ref.current.offsetHeight / 2;
-      window.scrollTo({ top: middleOfScreen, behavior: "smooth" });
+      window.scrollTo({ top: middleOfScreen - 150, behavior: "smooth" });
     }
   };
 
@@ -147,7 +147,7 @@ export default function Home() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-brand03/60 to-brand03/85 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-gradient-to-b from-brand03/40 to-brand03/65 backdrop-blur-sm" />
         </div>
         <div className="absolute w-[50%] h-[1px] bg-neutral01/20 z-20 left-1/2 top-1/2 -translate-x-1/2 -rotate-45"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-20 flex flex-col justify-between py-12 md:py-16 h-screen">
@@ -206,7 +206,7 @@ export default function Home() {
       </section>
 
       {/* About Section - Enhanced with modern gradient and animations */}
-      <section className="py-32 bg-gradient-to-br from-slate-50 via-white to-emerald-50 relative overflow-hidden">
+      <section className="py-32 bg-gradient-to-br from-brand03/20 via-neutral01 to-brand01/60 relative overflow-hidden border-t-4 border-brand01/60">
         {/* Background decorative elements */}
         <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-brand01/10 to-transparent rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-emerald-500/10 to-transparent rounded-full blur-3xl"></div>
@@ -214,7 +214,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-20">
             <h2
-              className={`text-7xl font-bold bg-brand01 bg-clip-text text-transparent mb-8 ${dmSerifDisplay.className}`}
+              className={`text-7xl font-bold bg-gradient-to-r from-brand01 via-brand01 to-brand02 bg-clip-text text-transparent pb-4 mb-8 ${dmSerifDisplay.className}`}
             >
               Apa Itu DaurTani?
             </h2>
@@ -354,7 +354,7 @@ export default function Home() {
       </section>
 
       {/* Enhanced Marketplace Section */}
-      <section className="py-32 bg-gradient-to-br from-white via-emerald-50/30 to-teal-50 relative overflow-hidden">
+      <section className="py-32 bg-gradient-to-bl from-brand01/60 via-neutral01 to-teal-50 relative overflow-hidden border-t-4 border-brand01/40">
         {/* Background patterns */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 left-10 w-32 h-32 bg-brand01 rounded-full"></div>
@@ -365,7 +365,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
             <h2
-              className={`text-7xl font-bold text-brand01 bg-clip-text mb-8 ${dmSerifDisplay.className}`}
+              className={`text-7xl font-bold text-brand01 pb-4 mb-8 ${dmSerifDisplay.className}`}
             >
               Marketplace
             </h2>
@@ -410,73 +410,17 @@ export default function Home() {
           {/* Enhanced Product Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {productsData.map((item, index) => (
-              <div
+              <ProductCard
                 key={index}
-                className="group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-slate-100 hover:scale-105"
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                  {item.featured && (
-                    <div className="absolute top-4 left-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
-                      <Star size={14} fill="currentColor" />
-                      Featured
-                    </div>
-                  )}
-
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                    <ArrowRight size={16} className="text-brand01" />
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <h3
-                    className={`text-xl font-bold text-slate-800 mb-2 ${dmSerifDisplay.className}`}
-                  >
-                    {item.title}
-                  </h3>
-                  <p
-                    className={`text-slate-600 mb-4 text-sm ${dmSans.className}`}
-                  >
-                    {item.description}
-                  </p>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <span
-                      className={`text-2xl font-bold text-brand01 ${dmSerifDisplay.className}`}
-                    >
-                      {item.price}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <Star
-                        size={16}
-                        className="text-amber-400"
-                        fill="currentColor"
-                      />
-                      <span className="text-slate-600 font-medium">
-                        {item.rating}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm text-slate-500">
-                    <div className="flex items-center gap-1">
-                      <MapPin size={14} />
-                      {item.location}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Package size={14} />
-                      {item.stock} tersedia
-                    </div>
-                  </div>
-                </div>
-              </div>
+                image={item.image}
+                title={item.title}
+                description={item.description}
+                price={item.price}
+                rating={item.rating}
+                location={item.location}
+                stock={item.stock}
+                featured={item.featured}
+              />
             ))}
           </div>
 
@@ -493,7 +437,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="pt-0">
+      <section className="pt-0 border-b-4 border-brand01/60">
         <div className="w-full mx-auto">
           {/* <h2
             className={`text-6xl font-bold text-center text-brand03 mb-12 ${dmSerifDisplay.className}`}
@@ -502,10 +446,11 @@ export default function Home() {
           </h2> */}
           <div className="flex flex-row h-full w-screen">
             {products.map((item, index) => (
-              <div
+              <Link
+                href={item.url}
                 key={index}
                 className={`relative overflow-hidden transition-all duration-500 ease-in-out h-80 hover:cursor-pointer ${
-                  hoverIndex === index ? "w-3/5" : "w-1/3"
+                  hoverIndex === index ? "w-4/5" : "w-1/2"
                 }`}
                 onMouseOver={() => setHoverIndex(index)}
                 onMouseLeave={() => setHoverIndex(null)}
@@ -573,7 +518,7 @@ export default function Home() {
                     <p>{item.deskripsi}</p>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -582,7 +527,7 @@ export default function Home() {
       {/* Enhanced CTA Section */}
       <section className="relative py-32 overflow-hidden">
         {/* Animated background */}
-        <div className="absolute inset-0 bg-brand01"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-brand01/40 via-neutral01 to-neutral01"></div>
 
         {/* Floating elements */}
         <div className="absolute top-20 left-20 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>
@@ -597,9 +542,9 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           {/* Main content */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl border border-white/20 p-12 shadow-2xl">
+          <div className="bg-white/20 backdrop-blur-lg rounded-3xl border border-white/20 p-12 shadow-2xl">
             <h2
-              className={`text-5xl md:text-6xl font-bold text-white mb-6 ${dmSerifDisplay.className}`}
+              className={`text-5xl md:text-6xl font-bold bg-gradient-to-r from-brand01 via-brand01 to-brand02 bg-clip-text text-transparent pb-4 mb-6 ${dmSerifDisplay.className}`}
             >
               Bergabung Sekarang
             </h2>
@@ -607,7 +552,7 @@ export default function Home() {
             <div className="w-24 h-1 bg-gradient-to-r from-brand02 to-amber-400 mx-auto mb-8 rounded-full"></div>
 
             <p
-              className={`text-xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed ${dmSans.className}`}
+              className={`text-xl text-brand03/90 mb-12 max-w-3xl mx-auto leading-relaxed ${dmSans.className}`}
             >
               Jadilah bagian dari gerakan pertanian berkelanjutan. Mulai daur
               ulang limbah pertanian Anda hari ini dan bergabung dengan ribuan
@@ -617,43 +562,43 @@ export default function Home() {
             {/* Features grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <div className="w-16 h-16 bg-gradient-to-br from-brand02 to-amber-400 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                  <Package size={24} className="text-slate-900" />
+                <div className="w-16 h-16 bg-white/10 shadow-lg border border-brand02/40 backdrop-blur-md rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                  <Package size={24} className="text-brand02" />
                 </div>
                 <h3
-                  className={`text-white font-semibold mb-2 ${dmSerifDisplay.className}`}
+                  className={`text-brand03 font-semibold mb-2 ${dmSerifDisplay.className}`}
                 >
                   Marketplace Terpercaya
                 </h3>
-                <p className="text-white/80 text-sm">
+                <p className="text-brand03/80 text-sm">
                   Jual beli limbah pertanian dengan aman dan transparan
                 </p>
               </div>
 
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                  <Star size={24} className="text-white" />
+                <div className="w-16 h-16 bg-white/10 shadow-lg border border-brand02/40 backdrop-blur-md rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                  <Star size={24} className="text-brand02" />
                 </div>
                 <h3
-                  className={`text-white font-semibold mb-2 ${dmSerifDisplay.className}`}
+                  className={`text-brand03 font-semibold mb-2 ${dmSerifDisplay.className}`}
                 >
                   Panduan Lengkap
                 </h3>
-                <p className="text-white/80 text-sm">
+                <p className="text-brand03/80 text-sm">
                   Akses panduan dan tutorial pengolahan limbah pertanian
                 </p>
               </div>
 
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                  <MapPin size={24} className="text-white" />
+                <div className="w-16 h-16 bg-white/10 shadow-lg border border-brand02/40 backdrop-blur-md rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                  <MapPin size={24} className="text-brand02" />
                 </div>
                 <h3
-                  className={`text-white font-semibold mb-2 ${dmSerifDisplay.className}`}
+                  className={`text-brand03 font-semibold mb-2 ${dmSerifDisplay.className}`}
                 >
                   Komunitas Aktif
                 </h3>
-                <p className="text-white/80 text-sm">
+                <p className="text-brand03/80 text-sm">
                   Bergabung dengan komunitas petani di seluruh Indonesia
                 </p>
               </div>
@@ -663,7 +608,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
                 href="/register"
-                className={`group bg-gradient-to-r from-white to-slate-100 text-brand01 px-12 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
+                className={`group bg-brand01 text-neutral01 px-12 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
               >
                 Daftar Gratis
                 <ArrowRight
@@ -674,7 +619,7 @@ export default function Home() {
 
               <Link
                 href="/marketplace"
-                className={`group bg-transparent border-2 border-white/50 text-white px-12 py-4 rounded-2xl font-bold hover:bg-white/10 hover:border-white transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
+                className={`group bg-white/40 border-2 border-white/50 backdrop-blur-md text-brand02 px-12 py-4 rounded-2xl font-bold hover:shadow-2xl hov hover:border-white transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
               >
                 Jelajahi Marketplace
                 <ArrowRight
@@ -686,8 +631,8 @@ export default function Home() {
 
             {/* Trust indicators */}
             <div className="mt-12 pt-8 border-t border-white/20">
-              <p className="text-white/70 text-sm mb-4">Dipercaya oleh:</p>
-              <div className="flex justify-center items-center gap-8 text-white">
+              <p className="text-brand03/70 text-sm mb-4">Dipercaya oleh:</p>
+              <div className="flex justify-center items-center gap-8 text-brand03">
                 <div className="text-center">
                   <div
                     className={`text-2xl font-bold  ${dmSerifDisplay.className}`}
