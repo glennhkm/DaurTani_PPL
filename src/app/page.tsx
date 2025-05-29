@@ -206,7 +206,7 @@ export default function Home() {
       </section>
 
       {/* About Section - Enhanced with modern gradient and animations */}
-      <section className="py-32 bg-gradient-to-br from-brand03/20 via-neutral01 to-brand01/60 relative overflow-hidden border-t-[6px] border-brand01/60">
+      <section className="py-32 bg-gradient-to-tl from-brand01/60 via-neutral01 to-brand02/60 relative overflow-hidden border-t-[6px] border-brand02/60">
         {/* Background decorative elements */}
         <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-brand01/10 to-transparent rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-emerald-500/10 to-transparent rounded-full blur-3xl"></div>
@@ -619,7 +619,7 @@ export default function Home() {
 
               <Link
                 href="/marketplace"
-                className={`group bg-white/40 border-2 border-white/50 backdrop-blur-md text-brand02 px-12 py-4 rounded-2xl font-bold hover:shadow-2xl hov hover:border-white transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
+                className={`group bg-white/20 border-2 border-brand02/40 backdrop-blur-md text-brand02 px-12 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
               >
                 Jelajahi Marketplace
                 <ArrowRight

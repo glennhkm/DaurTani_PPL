@@ -6,6 +6,7 @@ import { dmSerifDisplay } from "../fonts/dmSerifDisplay";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
+import axios from "axios";
 
 export const Navbar = () => {
   const [atTop, setAtTop] = useState(true);
@@ -30,6 +31,20 @@ export const Navbar = () => {
     }
   };
 
+  const handleLoginClick = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/auth/login-oauth");
+      if (response.status === 200) {
+        console.log("Redirecting to:", response.data.data.url);
+        router.push(response.data.data.url);
+      } else {
+        console.error("Failed to initiate login");
+      }
+    } catch (error) {
+      console.error("Network error during login:", error);
+    }
+  }
+
   useEffect(() => {
     const handleScroll = () => setAtTop(window.scrollY === 0);
     handleScroll();
@@ -41,10 +56,10 @@ export const Navbar = () => {
 
   return (
     <nav
-      className={`fixed w-full z-50 backdrop-blur-md border-b transition-colors duration-200 ${
+      className={`fixed w-full z-50 transition-colors border-b duration-200 ${
         atTop
-          ? "bg-transparent border-neutral01/10"
-          : "bg-neutral01/10 border-brand03/10"
+          ? "bg-transparent border-neutral01/10 backdrop-blur-md"
+          : "bg-neutral01 border-brand03/10 shadow-md"
       }`}
     >
       <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-20">
@@ -65,7 +80,7 @@ export const Navbar = () => {
               <Link
                 key={index}
                 href={item.url}
-                className="hover:text-brand01 duration-200 px-3 py-2"
+                className={`px-3 py-2 duration-200 ${pathname === item.url ? "text-brand01" : (atTop ? "text-neutral01" : "text-brand03")} hover:text-brand01`}
               >
                 {item.name}
               </Link>
@@ -101,18 +116,19 @@ export const Navbar = () => {
               </div>
             ) : (
               <>
-                <Link
+                {/* <Link
                   href="/login"
-                  className="hover:text-brand01 duration-200 px-3 py-2"
+                  className={`px-3 py-2 duration-200 ${pathname === "/login" ? "text-brand01" : (atTop ? "text-neutral01" : "text-brand03")} hover:text-brand01`}
                 >
                   Masuk
-                </Link>
-                <Link
-                  href="/register"
-                  className="bg-brand01 px-4 py-2 hover:opacity-80 duration-200 transition-colors text-neutral01 rounded-lg"
+                </Link> */}
+                <button
+                  // href="/register"
+                  onClick={handleLoginClick}
+                  className={`bg-brand01 px-4 py-2 hover:opacity-80 duration-200 transition-colors text-neutral01 rounded-lg ${pathname === "/register" ? "text-brand01" : ""}`}
                 >
-                  Daftar
-                </Link>
+                  Daftar/Masuk
+                </button>
               </>
             )}
           </div>
@@ -143,7 +159,7 @@ export const Navbar = () => {
               <Link
                 key={index}
                 href={item.url}
-                className="block px-3 py-2 hover:text-brand01 duration-200"
+                className={`block px-3 py-2 duration-200 ${pathname === item.url ? "text-brand01" : ""} hover:text-brand01`}
               >
                 {item.name}
               </Link>
@@ -155,34 +171,34 @@ export const Navbar = () => {
                 </div>
                 <Link
                   href="/marketplace/cart"
-                  className="block px-3 py-2 hover:text-brand01 duration-200"
+                  className={`block px-3 py-2 duration-200 ${pathname === "/marketplace/cart" ? "text-brand01" : ""} hover:text-brand01`}
                 >
                   Keranjang
                 </Link>
                 <Link
                   href="/marketplace/orders"
-                  className="block px-3 py-2 hover:text-brand01 duration-200"
+                  className={`block px-3 py-2 duration-200 ${pathname === "/marketplace/orders" ? "text-brand01" : ""} hover:text-brand01`}
                 >
                   Pesanan Saya
                 </Link>
                 <button
                   onClick={logout}
-                  className="block w-full text-left px-3 py-2 hover:text-brand01 duration-200"
+                  className={`block w-full text-left px-3 py-2 duration-200 ${pathname === "/logout" ? "text-brand01" : ""} hover:text-brand01`}
                 >
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <Link
+                {/* <Link
                   href="/login"
-                  className="block px-3 py-2 hover:text-brand01 duration-200"
+                  className={`block px-3 py-2 duration-200 ${pathname === "/login" ? "text-brand01" : ""} hover:text-brand01`}
                 >
                   Masuk
-                </Link>
+                </Link> */}
                 <Link
                   href="/register"
-                  className="block px-3 py-2 hover:text-brand01 duration-200"
+                  className={`block px-3 py-2 duration-200 ${pathname === "/register" ? "text-brand01" : ""} hover:text-brand01`}
                 >
                   Daftar
                 </Link>

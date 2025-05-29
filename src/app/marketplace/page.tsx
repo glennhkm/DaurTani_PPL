@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   Star,
@@ -16,12 +16,145 @@ import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
 import { ProductCard, ProductCardProps } from "@/components/cards/productCard";
 import { StatCard, StatCardProps } from "@/components/cards/statCard";
 
+// Search Controls Component
+const SearchControls = ({
+  isSticky = false,
+  tempQuery,
+  setTempQuery,
+  handleSearch,
+  searchQuery,
+  selectedLocation,
+  setSelectedLocation,
+  locations,
+  showFilters,
+  setShowFilters,
+  sortBy,
+  setSortBy,
+  resetFilters,
+  filteredAndSortedProducts,
+  productsData,
+}: {
+  isSticky?: boolean;
+  tempQuery: string;
+  setTempQuery: React.Dispatch<React.SetStateAction<string>>;
+  handleSearch: () => void;
+  searchQuery: string;
+  selectedLocation: string;
+  setSelectedLocation: React.Dispatch<React.SetStateAction<string>>;
+  locations: string[];
+  showFilters: boolean;
+  setShowFilters: React.Dispatch<React.SetStateAction<boolean>>;
+  sortBy: string;
+  setSortBy: React.Dispatch<React.SetStateAction<string>>;
+  resetFilters: () => void;
+  filteredAndSortedProducts: ProductCardProps[];
+  productsData: ProductCardProps[];
+}) => (
+  <div className={`space-y-6 ${isSticky ? 'bg-neutral01 px-20 pb-2 pt-2 shadow-lg border-b border-brand03/10' : ''}`}>
+    {/* Search, Filter and Sort Controls */}
+    <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+      {/* Search Bar */}
+      <div className="relative flex-1 order-3 lg:order-1 w-full">
+        <div className="relative flex">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-brand03/60 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Cari produk limbah pertanian..."
+            value={tempQuery}
+            onChange={(e) => setTempQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSearch();
+              }
+            }}
+            className="flex-1 pl-12 pr-16 py-3 rounded-2xl border border-brand03/20 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 bg-transparent text-brand03 placeholder-brand03/60 shadow-sm"
+          />
+          <button
+            onClick={handleSearch}
+            className="absolute h-full right-0 bg-brand01 hover:bg-brand01/90 text-neutral01 px-8 py-1.5 rounded-r-2xl transition-all duration-300 text-sm font-medium"
+          >
+            Cari
+          </button>
+        </div>
+      </div>
+      {/* Filter Controls */}
+      <div className="flex gap-3 order-2 lg:order-2">
+        {/* Location Filter */}
+        <div className="relative">
+          <select
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            className="appearance-none bg-transparent border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm"
+          >
+            <option value="">Semua Lokasi</option>
+            {locations.map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
+          </select>
+          <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
+        </div>
+        {/* Toggle Filters Button */}
+        {/* <button
+          onClick={() => setShowFilters(!showFilters)}
+          className={`flex items-center gap-2 px-4 py-3 rounded-2xl border transition-all duration-300 ${
+            showFilters
+              ? "bg-brand01 text-neutral01 border-brand01"
+              : "bg-neutral01 text-brand03 border-brand03/20 hover:border-brand01"
+          }`}
+        >
+          <Filter className="w-4 h-4" />
+          <span className="text-sm font-medium">Filter</span>
+        </button> */}
+      </div>
+      {/* Sort Dropdown */}
+      <div className="relative order-1 lg:order-3">
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="appearance-none bg-transparent border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm min-w-[160px]"
+        >
+          <option value="featured">Unggulan</option>
+          <option value="price-low">Harga Terendah</option>
+          <option value="price-high">Harga Tertinggi</option>
+          <option value="rating">Rating Tertinggi</option>
+          <option value="stock">Stok Terbanyak</option>
+        </select>
+        <ArrowUpDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
+      </div>
+    </div>
+    {/* Results Summary */}
+    <div className="flex items-center justify-between text-sm text-brand03/70">
+      <div className="flex items-center gap-2">
+        <Package className="w-4 h-4" />
+        <span>
+          Menampilkan {filteredAndSortedProducts.length} dari {productsData.length} produk
+        </span>
+      </div>
+      {(searchQuery || selectedLocation) && (
+        <button
+          onClick={resetFilters}
+          className="text-brand01 hover:text-brand01/80 font-medium transition-colors duration-300"
+        >
+          Reset Filter
+        </button>
+      )}
+    </div>
+  </div>
+);
+
 export default function Marketplace() {
   const [tempQuery, setTempQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
-  const [sortBy, setSortBy] = useState("featured"); // featured, price-low, price-high, rating, stock
+  const [sortBy, setSortBy] = useState("featured");
   const [showFilters, setShowFilters] = useState(false);
+  const [isSearchSticky, setIsSearchSticky] = useState(false);
+
+  const searchSectionRef = useRef<HTMLDivElement>(null);
+  const stickyPlaceholderRef = useRef<HTMLDivElement>(null);
 
   const keyBenefitsData = [
     {
@@ -115,6 +248,39 @@ export default function Marketplace() {
     },
   ];
 
+  // Intersection Observer for sticky search
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSearchSticky(!entry.isIntersecting);
+      },
+      {
+        threshold: 0,
+        rootMargin: "0px 0px 0px 0px", // Trigger exactly when the element leaves the viewport
+      }
+    );
+
+    if (searchSectionRef.current) {
+      observer.observe(searchSectionRef.current);
+    }
+
+    return () => {
+      if (searchSectionRef.current) {
+        observer.unobserve(searchSectionRef.current);
+      }
+    };
+  }, []);
+
+  // Dynamically set placeholder height to match sticky search bar
+  useEffect(() => {
+    if (isSearchSticky && searchSectionRef.current && stickyPlaceholderRef.current) {
+      const height = searchSectionRef.current.getBoundingClientRect().height;
+      stickyPlaceholderRef.current.style.height = `${height}px`;
+    } else if (stickyPlaceholderRef.current) {
+      stickyPlaceholderRef.current.style.height = "0px";
+    }
+  }, [isSearchSticky]);
+
   // Get unique locations for filter
   const locations = [
     ...new Set(productsData.map((product) => product.location)),
@@ -160,15 +326,14 @@ export default function Marketplace() {
     return filtered;
   }, [searchQuery, selectedLocation, sortBy]);
 
-  const getSortLabel = (value: string) => {
-    const labels = {
-      featured: "Unggulan",
-      "price-low": "Harga Terendah",
-      "price-high": "Harga Tertinggi",
-      rating: "Rating Tertinggi",
-      stock: "Stok Terbanyak",
-    };
-    return labels[value as keyof typeof labels] || "Unggulan";
+  const handleSearch = () => {
+    setSearchQuery(tempQuery.trim());
+  };
+
+  const resetFilters = () => {
+    setTempQuery("");
+    setSearchQuery("");
+    setSelectedLocation("");
   };
 
   return (
@@ -209,7 +374,7 @@ export default function Marketplace() {
         </div>
       </div>
 
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-20 py-16 md:pb-20 pt-16 relative">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-20 py-16 md:pb-20 relative">
         <div className="w-full md:w-auto mx-auto absolute left-1/2 -translate-x-1/2 -top-[2rem] lg:-top-[4.5rem]">
           <div className="bg-neutral01 rounded-2xl p-2 lg:p-6 shadow-xl grid grid-cols-4 gap-4 md:gap-6">
             {statsData.map((item, index) => (
@@ -217,109 +382,56 @@ export default function Marketplace() {
             ))}
           </div>
         </div>
-        {/* Search and Filter Section */}
-        <div className="mb-12 mt-16 space-y-6">
-          {/* Search, Filter and Sort Controls */}
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            {/* Search Bar */}
-            <div className="relative flex-1 order-3 lg:order-1 w-full">
-              <div className="relative flex">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-brand03/60 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Cari produk limbah pertanian..."
-                  value={tempQuery}
-                  onChange={(e) => setTempQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      setSearchQuery(tempQuery.trim());
-                    }
-                  }}
-                  className="flex-1 pl-12 pr-16 py-3 rounded-2xl border border-brand03/20 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 bg-neutral01 text-brand03 placeholder-brand03/60 shadow-sm"
-                />
-                <button
-                  onClick={() => {
-                  }}
-                  className="absolute h-full right-0 bg-brand01 hover:bg-brand01/90 text-neutral01 px-8 py-1.5 rounded-r-2xl transition-all duration-300 text-sm font-medium"
-                >
-                  Cari
-                </button>
-              </div>
-            </div>
 
-            {/* Filter Controls */}
-            <div className="flex gap-3 order-2 lg:order-2">
-              {/* Location Filter */}
-              <div className="relative">
-                <select
-                  value={selectedLocation}
-                  onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="appearance-none bg-neutral01 border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm"
-                >
-                  <option value="">Semua Lokasi</option>
-                  {locations.map((location) => (
-                    <option key={location} value={location}>
-                      {location}
-                    </option>
-                  ))}
-                </select>
-                <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
-              </div>
+        {/* Search Section - Original Position */}
+        <div ref={searchSectionRef} className="mb-12 mt-16">
+          <SearchControls
+            tempQuery={tempQuery}
+            setTempQuery={setTempQuery}
+            handleSearch={handleSearch}
+            searchQuery={searchQuery}
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+            locations={locations}
+            showFilters={showFilters}
+            setShowFilters={setShowFilters}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            resetFilters={resetFilters}
+            filteredAndSortedProducts={filteredAndSortedProducts}
+            productsData={productsData}
+          />
+        </div>
 
-              {/* Toggle Filters Button */}
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-2xl border transition-all duration-300 ${
-                  showFilters
-                    ? "bg-brand01 text-neutral01 border-brand01"
-                    : "bg-neutral01 text-brand03 border-brand03/20 hover:border-brand01"
-                }`}
-              >
-                <Filter className="w-4 h-4" />
-                <span className="text-sm font-medium">Filter</span>
-              </button>
-            </div>
-
-            {/* Sort Dropdown */}
-            <div className="relative order-1 lg:order-3">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-neutral01 border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm min-w-[160px]"
-              >
-                <option value="featured">Unggulan</option>
-                <option value="price-low">Harga Terendah</option>
-                <option value="price-high">Harga Tertinggi</option>
-                <option value="rating">Rating Tertinggi</option>
-                <option value="stock">Stok Terbanyak</option>
-              </select>
-              <ArrowUpDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
-            </div>
-          </div>
-
-          {/* Results Summary */}
-          <div className="flex items-center justify-between text-sm text-brand03/70">
-            <div className="flex items-center gap-2">
-              <Package className="w-4 h-4" />
-              <span>
-                Menampilkan {filteredAndSortedProducts.length} dari{" "}
-                {productsData.length} produk
-              </span>
-            </div>
-            {(searchQuery || selectedLocation) && (
-              <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedLocation("");
-                }}
-                className="text-brand01 hover:text-brand01/80 font-medium transition-colors duration-300"
-              >
-                Reset Filter
-              </button>
-            )}
+        {/* Sticky Search Bar */}
+        <div
+          className={`fixed top-12 -mx-20 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
+            isSearchSticky ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <div className="px-4 sm:px-6 lg:px-20 py-4">
+            <SearchControls
+              isSticky={true}
+              tempQuery={tempQuery}
+              setTempQuery={setTempQuery}
+              handleSearch={handleSearch}
+              searchQuery={searchQuery}
+              selectedLocation={selectedLocation}
+              setSelectedLocation={setSelectedLocation}
+              locations={locations}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              resetFilters={resetFilters}
+              filteredAndSortedProducts={filteredAndSortedProducts}
+              productsData={productsData}
+            />
           </div>
         </div>
+
+        {/* Placeholder to prevent content jump */}
+        <div ref={stickyPlaceholderRef} className="transition-all duration-300"></div>
 
         {/* Products Grid */}
         {filteredAndSortedProducts.length > 0 ? (
@@ -351,10 +463,7 @@ export default function Marketplace() {
                 Coba ubah kata kunci pencarian atau filter yang Anda gunakan
               </p>
               <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedLocation("");
-                }}
+                onClick={resetFilters}
                 className="bg-brand01 hover:bg-brand01/90 text-neutral01 px-6 py-2.5 rounded-2xl transition-all duration-300 font-medium"
               >
                 Reset Pencarian
