@@ -405,7 +405,7 @@ export default function Marketplace() {
 
         {/* Sticky Search Bar */}
         <div
-          className={`fixed top-12 -mx-20 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
+          className={`fixed top-12 -mx-20 left-0 right-0 z-40 transition-all duration-300 ease-in-out ${
             isSearchSticky ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >

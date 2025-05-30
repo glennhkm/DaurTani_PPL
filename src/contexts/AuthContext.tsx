@@ -1,64 +1,82 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { createContext, useContext, useState, ReactNode, useEffect, use } from "react";
+import { supabase } from "@/lib/supabase/client";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
-interface User {
-  _id: string;
-  name: string;
+export interface User {
+  id: string;
   email: string;
-  role: string;
+  fullName: string;
+  phoneNumber?: string;
+  [key: string]: any;
 }
 
 interface AuthContextType {
+  accessToken: string | null;
   user: User | null;
-  loading: boolean;
-  login: (token: string, userData: User) => void;
+  setAuth: (token: string, user: User) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // Inisialisasi dari localStorage Supabase saat mount
   useEffect(() => {
-    // Cek token di localStorage saat komponen mount
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      setUser(JSON.parse(userData));
+    const supabaseKey = Object.keys(localStorage).find(
+      (key) => key.includes('-auth-token')
+    );
+    if (supabaseKey) {
+      const value = localStorage.getItem(supabaseKey);
+      if (value) {
+        try {
+          const parsed = JSON.parse(value);
+          let user = parsed.user || null;
+          if (user && user.user_metadata) {
+            user = { ...user, fullName: user.user_metadata.full_name, phoneNumber: user.phone || user.user_metadata.phone_number};
+          }
+          setAccessToken(parsed.access_token || null);
+          setUser(user);
+        } catch (e) {
+          setAccessToken(null);
+          setUser(null);
+        }
+      }
     }
-    setLoading(false);
   }, []);
 
-  const login = (token: string, userData: User) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
+  const setAuth = (token: string, user: User) => {
+    setAccessToken(token);
+    setUser(user);
+    // Tidak perlu simpan ke localStorage, Supabase sudah handle
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const logout = async () => {
+    const toastId = toast.loading("Memproses...");
+    await supabase.auth.signOut();
+    setAccessToken(null);
     setUser(null);
-    router.push('/');
+    toast.success("Berhasil logout!", { id: toastId });
+    router.push("/auth/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ accessToken, user, setAuth, logout }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-} 
+}; 
