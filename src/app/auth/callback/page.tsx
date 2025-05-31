@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { useAuth, User } from "@/contexts/AuthContext";
 import toast from "react-hot-toast";
+import API from "@/lib/utils/apiCreate";
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -12,41 +13,63 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const handleAuth = async () => {
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      const accessToken = params.get("access_token");
-      const refreshToken = params.get("refresh_token") || "";
+      try {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get("access_token");
+        const refreshToken = params.get("refresh_token") || "";
 
-      if (accessToken) {
-        // Set session dengan access_token yang didapat dari OAuth
-        await supabase.auth.setSession({
+        if (!accessToken) {
+          throw new Error("No access token found");
+        }
+
+        const { error: sessionError } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken,
         });
 
-        // Dapatkan data user
-        const { data: user, error } = await supabase.auth.getUser();
-        if (error) {
-          console.error(error);
-        } else {
-          // console.log(user.user)
-          const authenticatedUser: User = {
-            email: user.user.email || "",
-            fullName: user.user.user_metadata.full_name,
-            phoneNumber: user.user.phone,
-            ...user.user
-          }
-          setAuth(accessToken, authenticatedUser);
+        if (sessionError) {
+          throw sessionError;
         }
-        toast.success("Login berhasil")
-        router.replace("/marketplace");
-      } else {
-        toast.error("Login gagal")
+
+        const { data: userData, error: userError } =
+          await supabase.auth.getUser();
+        if (userError || !userData?.user) {
+          throw userError || new Error("User not found");
+        }
+
+        const user = userData.user;
+
+        const authenticatedUser: User = {
+          email: user.email || "",
+          fullName: user.user_metadata?.full_name || "",
+          phoneNumber: user.phone || "",
+          ...user,
+          accessToken,
+          refreshToken,
+        };
+
+        const response = await API.post(
+          "/auth/success-oauth",
+          authenticatedUser
+        );
+        if (response.status === 200) {
+          setAuth(accessToken, authenticatedUser);
+          toast.success("Berhasil masuk");
+          router.replace("/marketplace");
+        } else {
+          throw new Error("Gagal menyimpan user");
+        }
+      } catch (err: any) {
+        console.error("OAuth Error:", err);
+        toast.error("Gagal masuk");
         router.replace("/auth/login?error=oauth");
       }
     };
 
-    handleAuth();
+    if (typeof window !== "undefined") {
+      handleAuth();
+    }
   }, [router]);
 
   return (
@@ -82,7 +105,6 @@ export default function AuthCallback() {
     </div>
   );
 }
-
 
 // {
 //   "id": "5830b8f4-edc6-45ef-81bb-5566782f2c5a",

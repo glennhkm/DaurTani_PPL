@@ -6,7 +6,7 @@ import { dmSerifDisplay } from "../fonts/dmSerifDisplay";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
-import { User, Store, LogOut, ChevronDown } from "lucide-react";
+import { User, Store, LogOut, ChevronDown, ShoppingCart } from "lucide-react";
 import { dmSans } from "../fonts/dmSans";
 
 export const Navbar = () => {
@@ -16,6 +16,7 @@ export const Navbar = () => {
   const { user, logout } = useAuth();
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
+  // const homeRelatedRoute = ['marketplace', 'panduan-olahan', '/']
 
   const navMenu = [
     { name: "Marketplace", url: "/marketplace" },
@@ -50,6 +51,9 @@ export const Navbar = () => {
     };
   }, [showUserDropdown]);
 
+  const isMarketplaceRelated = pathname.includes('/marketplace');
+  // const isHomeRelated = !homeRelatedRoute.includes(pathname);
+
   if (pathname.includes("/auth")) return null;
 
   return (
@@ -79,7 +83,7 @@ export const Navbar = () => {
                 key={index}
                 href={item.url}
                 className={`px-3 py-2 duration-200 ${
-                  pathname === item.url
+                  pathname === item.url || (item.url === "/marketplace" && isMarketplaceRelated)
                     ? "text-brand01"
                     : atTop
                     ? "text-neutral01"
@@ -90,12 +94,25 @@ export const Navbar = () => {
               </Link>
             ))}
 
-            {/* <Link
-                  href="/login"
-                  className={`px-3 py-2 duration-200 ${pathname === "/login" ? "text-brand01" : (atTop ? "text-neutral01" : "text-brand03")} hover:text-brand01`}
-                >
-                  Masuk
-                </Link> */}
+            {/* Cart Icon - Only show if in marketplace section */}
+            {/* {isMarketplaceRelated && (
+              <Link 
+                href="/marketplace/cart"
+                className={`px-3 py-2 duration-200 relative ${
+                  pathname === "/marketplace/cart"
+                    ? "text-brand01"
+                    : atTop
+                    ? "text-neutral01"
+                    : "text-brand03"
+                } hover:text-brand01`}
+              >
+                <ShoppingCart size={22} />
+                <span className="absolute -top-1 -right-1 bg-brand01 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  0
+                </span>
+              </Link>
+            )} */}
+
             {user ? (
               <div className={`ml-4`} ref={userDropdownRef}>
                 <button
@@ -114,9 +131,9 @@ export const Navbar = () => {
                     <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-brand03 hover:bg-brand01/30 hover:font-semibold duration-200 cursor-pointer">
                       <User className="w-4 h-4" /> Profil
                     </button>
-                    <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-brand03 hover:bg-brand01/30 hover:font-semibold duration-200 cursor-pointer">
+                    <Link href="/marketplace/store" className="flex items-center gap-2 w-full text-left px-4 py-2 text-brand03 hover:bg-brand01/30 hover:font-semibold duration-200 cursor-pointer">
                       <Store className="w-4 h-4" /> Toko Anda
-                    </button>
+                    </Link>
                     <button
                       onClick={logout}
                       className="flex items-center gap-2 w-full text-left px-4 py-2 text-brand03 hover:bg-brand01/30 hover:font-semibold duration-200 cursor-pointer"
@@ -139,6 +156,25 @@ export const Navbar = () => {
 
         {/* Mobile menu button */}
         <div className="md:hidden flex items-center">
+          {/* Cart Icon for Mobile - Only show if in marketplace section */}
+          {isMarketplaceRelated && (
+            <Link 
+              href="/marketplace/cart"
+              className={`mr-4 relative ${
+                pathname === "/marketplace/cart"
+                  ? "text-brand01"
+                  : atTop
+                  ? "text-neutral01"
+                  : "text-brand03"
+              }`}
+            >
+              <ShoppingCart size={22} />
+              <span className="absolute -top-1 -right-1 bg-brand01 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                0
+              </span>
+            </Link>
+          )}
+          
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`${
@@ -180,18 +216,15 @@ export const Navbar = () => {
                 key={index}
                 href={item.url}
                 className={`block px-3 py-2 duration-200 ${
-                  pathname === item.url ? "text-brand01" : ""
+                  pathname === item.url || (item.url === "/marketplace" && isMarketplaceRelated)
+                    ? "text-brand01" 
+                    : ""
                 } hover:text-brand01`}
               >
                 {item.name}
               </Link>
             ))}
-            {/* <Link
-                  href="/login"
-                  className={`block px-3 py-2 duration-200 ${pathname === "/login" ? "text-brand01" : ""} hover:text-brand01`}
-                >
-                  Masuk
-                </Link> */}
+            
             {user ? (
               <div className="relative">
                 <button
@@ -207,10 +240,13 @@ export const Navbar = () => {
                     <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-brand03 hover:bg-brand01/30 hover:font-semibold duration-200 cursor-pointer">
                       <User className="w-4 h-4" /> Profil
                     </button>
-                    <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-brand03 hover:bg-brand01/30 hover:font-semibold duration-200 cursor-pointer">
+                    <Link href="/marketplace/store" className="flex items-center gap-2 w-full text-left px-4 py-2 text-brand03 hover:bg-brand01/30 hover:font-semibold duration-200 cursor-pointer">
                       <Store className="w-4 h-4" /> Toko Anda
-                    </button>
-                    <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-brand03 hover:bg-brand01/30 hover:font-semibold duration-200 cursor-pointer">
+                    </Link>
+                    <button 
+                      onClick={logout}
+                      className="flex items-center gap-2 w-full text-left px-4 py-2 text-brand03 hover:bg-brand01/30 hover:font-semibold duration-200 cursor-pointer"
+                    >
                       <LogOut className="w-4 h-4" /> Keluar
                     </button>
                   </div>

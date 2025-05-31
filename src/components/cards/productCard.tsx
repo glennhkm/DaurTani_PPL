@@ -2,8 +2,10 @@ import { ArrowRight, MapPin, Package, Star } from "lucide-react";
 import Image from "next/image";
 import { dmSans } from "../fonts/dmSans";
 import { dmSerifDisplay } from "../fonts/dmSerifDisplay";
+import { UnitPrice } from '@/types/product';
 
 export interface ProductCardProps {
+  id?: string;
   image: string;
   title: string;
   description: string;
@@ -12,6 +14,8 @@ export interface ProductCardProps {
   location: string;
   stock: number;
   featured?: boolean;
+  imageUrls?: string[];
+  unitPrices?: UnitPrice[];
 }
 
 export const ProductCard = ({
@@ -22,63 +26,56 @@ export const ProductCard = ({
   rating,
   location,
   stock,
-  featured = false,
+  featured,
+  imageUrls,
+  unitPrices
 }: ProductCardProps) => {
   return (
-    <div
-      className="group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-slate-100 hover:scale-105"
-    >
-      <div className="relative h-64 overflow-hidden">
+    <div className={`bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all ${featured ? 'ring-2 ring-brand01/20' : ''}`}>
+      <div className="relative h-48">
         <Image
           src={image}
           alt={title}
           fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
         {featured && (
-          <div className="absolute top-4 left-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
-            <Star size={14} fill="currentColor" />
-            Featured
+          <div className="absolute top-2 left-2 bg-brand01 text-white px-2 py-1 rounded-lg text-xs font-medium">
+            Unggulan
           </div>
         )}
-
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-          <ArrowRight size={16} className="text-brand01" />
-        </div>
       </div>
-
-      <div className="p-6">
-        <h3
-          className={`text-xl font-bold text-slate-800 mb-2 ${dmSerifDisplay.className}`}
-        >
+      
+      <div className="p-4">
+        <h3 className="text-lg font-bold text-slate-800 mb-1">
           {title}
         </h3>
-        <p className={`text-slate-600 mb-4 text-sm ${dmSans.className}`}>
+        
+        <p className="text-slate-600 text-sm mb-3 line-clamp-2">
           {description}
         </p>
-
-        <div className="flex items-center justify-between mb-4">
-          <span
-            className={`text-2xl font-bold text-brand01 ${dmSerifDisplay.className}`}
-          >
+        
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-lg font-bold text-brand01">
             {price}
           </span>
-          <div className="flex items-center gap-1">
-            <Star size={16} className="text-amber-400" fill="currentColor" />
-            <span className="text-slate-600 font-medium">{rating}</span>
+          
+          <div className="flex items-center">
+            <Star className="w-4 h-4 text-amber-400 mr-1" fill="currentColor" />
+            <span className="text-slate-600">{rating.toFixed(1)}</span>
           </div>
         </div>
-
+        
         <div className="flex items-center justify-between text-sm text-slate-500">
-          <div className="flex items-center gap-1">
-            <MapPin size={14} />
-            {location}
+          <div className="flex items-center">
+            <MapPin className="w-4 h-4 mr-1" />
+            <span>{location}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Package size={14} />
-            {stock} tersedia
+          <div className="flex items-center">
+            <Package className="w-4 h-4 mr-1" />
+            <span>{stock} tersedia</span>
           </div>
         </div>
       </div>

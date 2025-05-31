@@ -11,10 +11,12 @@ import {
   ArrowUpDown,
   MapPin,
   Package,
+  AlertCircle,
 } from "lucide-react";
 import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
 import { ProductCard, ProductCardProps } from "@/components/cards/productCard";
 import { StatCard, StatCardProps } from "@/components/cards/statCard";
+import API from "@/lib/utils/apiCreate";
 
 // Search Controls Component
 const SearchControls = ({
@@ -145,6 +147,31 @@ const SearchControls = ({
   </div>
 );
 
+// Update interfaces
+interface UnitPrice {
+  _id: string;
+  unit: string;
+  pricePerUnit: number;
+  isBaseUnit: boolean;
+  stock: number;
+  equalWith: number;
+}
+
+interface Product {
+  _id: string;
+  wasteName: string;
+  description: string;
+  imageUrls: string[];
+  averageRating: number;
+  createdAt: string;
+  updatedAt: string;
+  store: {
+    _id: string;
+    storeName: string;
+  };
+  unitPrices: UnitPrice[];
+}
+
 export default function Marketplace() {
   const [tempQuery, setTempQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -152,6 +179,9 @@ export default function Marketplace() {
   const [sortBy, setSortBy] = useState("featured");
   const [showFilters, setShowFilters] = useState(false);
   const [isSearchSticky, setIsSearchSticky] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
   const searchSectionRef = useRef<HTMLDivElement>(null);
   const stickyPlaceholderRef = useRef<HTMLDivElement>(null);
@@ -190,63 +220,49 @@ export default function Marketplace() {
     },
   ];
 
-  const productsData: ProductCardProps[] = [
-    {
-      image: "/images/ampasTebu.png",
-      title: "Ampas Tebu Premium",
-      description: "Limbah ampas tebu fresh berkualitas tinggi",
-      price: "Rp 2.500/kg",
-      rating: 4.8,
-      location: "Jawa Timur",
-      stock: 320,
-    },
-    {
-      image: "/images/ampasTebu.png",
-      title: "Ampas Tebu Organik",
-      description: "Ampas tebu bebas bahan kimia untuk pupuk organik",
-      price: "Rp 3.200/kg",
-      rating: 4.9,
-      location: "Jawa Barat",
-      stock: 150,
-      featured: true,
-    },
-    {
-      image: "/images/ampasTebu.png",
-      title: "Ampas Tebu Industri",
-      description: "Kualitas terbaik untuk kebutuhan industri bioethanol",
-      price: "Rp 2.100/kg",
-      rating: 4.7,
-      location: "Lampung",
-      stock: 500,
-    },
-    {
-      image: "/images/ampasTebu.png",
-      title: "Serbuk Gergaji Halus",
-      description: "Limbah kayu berkualitas untuk media tanam",
-      price: "Rp 1.800/kg",
-      rating: 4.6,
-      location: "Jawa Tengah",
-      stock: 200,
-    },
-    {
-      image: "/images/ampasTebu.png",
-      title: "Sekam Padi Premium",
-      description: "Sekam padi pilihan untuk pupuk dan media tanam",
-      price: "Rp 1.200/kg",
-      rating: 4.5,
-      location: "Jawa Barat",
-      stock: 450,
-    },
-    {
-      image: "/images/ampasTebu.png",
-      title: "Kulit Kacang Tanah",
-      description: "Limbah kulit kacang untuk pakan ternak berkualitas",
-      price: "Rp 2.800/kg",
-      rating: 4.8,
-      location: "Jawa Timur",
-      stock: 180,
-    },
-  ];
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await API.get('/farm-wastes');
+        setProducts(response.data.data);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to fetch products');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Convert API products to ProductCardProps format
+  const productsData = useMemo(() => {
+    return products.map(product => {
+      // Find base unit price
+      const baseUnit = product.unitPrices.find(up => up.isBaseUnit) || product.unitPrices[0];
+      const pricePerUnit = baseUnit ? baseUnit.pricePerUnit : 0;
+      const unit = baseUnit ? baseUnit.unit : '';
+      
+      // Calculate total stock across all units
+      const totalStock = product.unitPrices.reduce((sum, up) => sum + (up.stock || 0), 0);
+
+      return {
+        id: product._id,
+        image: product.imageUrls[0] || '/images/placeholder.png',
+        title: product.wasteName,
+        description: product.description,
+        price: `Rp ${pricePerUnit.toLocaleString('id-ID')}/${unit}`,
+        rating: product.averageRating || 0,
+        location: product.store.storeName,
+        stock: totalStock,
+        imageUrls: product.imageUrls,
+        unitPrices: product.unitPrices,
+      };
+    });
+  }, [products]);
 
   // Intersection Observer for sticky search
   useEffect(() => {
@@ -281,10 +297,10 @@ export default function Marketplace() {
     }
   }, [isSearchSticky]);
 
-  // Get unique locations for filter
-  const locations = [
-    ...new Set(productsData.map((product) => product.location)),
-  ];
+  // Get unique locations for filter from actual data
+  const locations = useMemo(() => {
+    return [...new Set(productsData.map((product) => product.location))];
+  }, [productsData]);
 
   // Extract price number for sorting
   const extractPrice = (priceStr: string) => {
@@ -314,17 +330,13 @@ export default function Marketplace() {
           return b.rating - a.rating;
         case "stock":
           return b.stock - a.stock;
-        case "featured":
         default:
-          // Featured items first, then by rating
-          if (a.featured && !b.featured) return -1;
-          if (!a.featured && b.featured) return 1;
           return b.rating - a.rating;
       }
     });
 
     return filtered;
-  }, [searchQuery, selectedLocation, sortBy]);
+  }, [searchQuery, selectedLocation, sortBy, productsData]);
 
   const handleSearch = () => {
     setSearchQuery(tempQuery.trim());
@@ -335,6 +347,39 @@ export default function Marketplace() {
     setSearchQuery("");
     setSelectedLocation("");
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-neutral01 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand01 mb-4"></div>
+          <p className="text-brand03">Memuat produk...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-neutral01 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <div className="text-red-500 mb-4">
+            <AlertCircle className="w-12 h-12 mx-auto" />
+          </div>
+          <h2 className="text-xl font-semibold text-brand03 mb-2">Gagal memuat produk</h2>
+          <p className="text-brand03/70 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-brand01 text-white px-6 py-2 rounded-lg hover:bg-brand01/90 transition-colors"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral01">
@@ -436,17 +481,17 @@ export default function Marketplace() {
         {/* Products Grid */}
         {filteredAndSortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-            {filteredAndSortedProducts.map((item, index) => (
+            {filteredAndSortedProducts.map((product) => (
               <ProductCard
-                key={`${item.title}-${index}`}
-                image={item.image}
-                title={item.title}
-                description={item.description}
-                price={item.price}
-                rating={item.rating}
-                location={item.location}
-                stock={item.stock}
-                featured={item.featured}
+                key={product.id}
+                image={product.imageUrls[0] || '/images/placeholder.png'}
+                title={product.title}
+                description={product.description}
+                price={product.price}
+                rating={product.rating}
+                location={product.location}
+                stock={product.stock}
+                unitPrices={product.unitPrices}
               />
             ))}
           </div>

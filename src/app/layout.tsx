@@ -6,6 +6,7 @@ import { dmSans } from "@/components/fonts/dmSans";
 import { Navbar } from "@/components/navbar/navbar";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "react-hot-toast";
+import { headers } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -10,3 +10,8 @@
   --color-brand03: #1E1E1E;
   --color-neutral01: #F9F5EC;
 }
+
+/* Set all button to cursor pointer */
+button {
+  cursor: pointer;
+}
