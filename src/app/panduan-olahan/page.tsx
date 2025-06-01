@@ -1,14 +1,22 @@
 "use client";
 
 import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import AISection from "./AISection";
 import ArticleVideoSection from "./articleVideoSection";
-import { Leaf, BookOpen, Bot } from "lucide-react";
+import { Leaf, BookOpen, Bot, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 
-const Panduan = () => {
+// Komponen untuk loading state
+const LoadingFallback = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <Loader2 className="w-8 h-8 animate-spin text-brand01" />
+  </div>
+);
+
+// Komponen utama yang menggunakan useSearchParams
+const PanduanContent = () => {
   const [activeMenu, setActiveMenu] = useState("ar/vid");
   const searchParams = useSearchParams();
 
@@ -95,6 +103,15 @@ const Panduan = () => {
         {showActiveSectionComponent()}
       </div>
     </div>
+  );
+};
+
+// Komponen wrapper dengan Suspense
+const Panduan = () => {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <PanduanContent />
+    </Suspense>
   );
 };
 
