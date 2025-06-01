@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Link from "next/link";
 import { GoogleIcon } from "@/components/icons/googleIcon";
-import { CornerUpLeft, Loader } from "lucide-react";
+import { CornerUpLeft, Loader2 } from "lucide-react";
 import API from "@/lib/utils/apiCreate";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase/client";
@@ -115,7 +115,7 @@ const Register = () => {
         className={`disabled:bg-cyan-800/60 disabled:cursor-not-allowed bg-cyan-700 hover:bg-cyan-800 py-2.5 rounded-xl shadow-lg cursor-pointer text-neutral01 duration-200`}
       >
         {isLoading ? (
-          <Loader className="animate-spin mx-auto opacity-50" style={{ animationDuration: "3s" }} />
+          <Loader2 className="animate-spin mx-auto opacity-50" style={{ animationDuration: "3s" }} />
         ) : (
           <span className="flex gap-4 justify-center items-center">
             <GoogleIcon width={24} height={24} />
@@ -206,7 +206,7 @@ const Register = () => {
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {loading ? (<Loader className="animate-spin mx-auto opacity-50"/>) : (<span>Daftar</span>)}
+            {loading ? (<Loader2 className="animate-spin mx-auto opacity-50"/>) : (<span>Daftar</span>)}
           </button>
         </div>
       </form>

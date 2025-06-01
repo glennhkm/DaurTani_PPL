@@ -2,13 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Star, MapPin, Package } from "lucide-react";
+import { ArrowRight, Star, MapPin, Package, Bot } from "lucide-react";
 import { MainLogo } from "@/components/iconAndLogo/mainLogo";
 import { Typewriter } from "react-simple-typewriter";
 import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
 import { dmSans } from "@/components/fonts/dmSans";
 import { useState, useRef, useEffect } from "react";
 import { ProductCard, ProductCardProps } from "@/components/cards/productCard";
+import { useScreenSize } from "@/hooks/screenSizeValidation";
+import { useRouter } from "next/navigation";
+import { ArticleVideoCard } from "@/components/cards/articleVideoCard";
 
 export default function Home() {
   const [hoverIndex, setHoverIndex] = useState<Number | null>(null);
@@ -18,6 +21,8 @@ export default function Home() {
   const sumberRef = useRef<HTMLDivElement>(null);
   const waktuRef = useRef<HTMLDivElement>(null);
   const wujudRef = useRef<HTMLDivElement>(null);
+  const { isDesktop } = useScreenSize();
+  const router = useRouter();
 
   useEffect(() => {
     setIsVisible(true);
@@ -147,14 +152,14 @@ export default function Home() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-brand03/40 to-brand03/65 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand03/40 to-brand03/80 backdrop-blur-sm" />
         </div>
-        <div className="absolute w-[50%] h-[1px] bg-neutral01/20 z-20 left-1/2 top-1/2 -translate-x-1/2 -rotate-45"></div>
+        <div className="absolute w-[90%] lg:w-[50%] h-[1px] bg-neutral01/20 z-20 left-1/2 top-1/2 -translate-x-1/2 lg:-rotate-45"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-20 flex flex-col justify-between py-12 md:py-16 h-screen">
           <div className="flex flex-col gap-6 max-w-xl self-start pt-8 md:pt-16">
-            <MainLogo width="500" />
+            <MainLogo className="w-[300px] xl:w-[400px]" />
             <h1
-              className={`text-4xl font-bold text-brand02 -mt-7 ${dmSerifDisplay.className}`}
+              className={`text-xl lg:text-4xl font-bold text-brand02 -mt-7 ${dmSerifDisplay.className}`}
             >
               <Typewriter
                 words={[
@@ -170,14 +175,14 @@ export default function Home() {
                 delaySpeed={1000}
               />
             </h1>
-            <p className="text-xl text-neutral01">
+            <p className="text-base lg:text-xl text-neutral01">
               Mengubah limbah pertanian menjadi produk bernilai tinggi untuk
               masa depan pertanian yang lebih berkelanjutan
             </p>
             <div className="flex gap-4">
               <Link
-                href="/register"
-                className={`bg-brand01 text-white px-8 py-3 font-medium hover:bg-brand01/90 transition-all duration-300 rounded-lg transform hover:scale-105 shadow-lg hover:shadow-xl ${dmSerifDisplay.className}`}
+                href="/auth/login"
+                className={`bg-brand01 text-sm lg:text-base text-white px-4 lg:px-8 py-3 font-medium hover:bg-brand01/90 transition-all duration-300 rounded-lg transform hover:scale-105 shadow-lg hover:shadow-xl ${dmSerifDisplay.className}`}
               >
                 Mulai Sekarang
                 <ArrowRight className="inline-block ml-2" size={20} />
@@ -189,7 +194,7 @@ export default function Home() {
             <h2 className={`${dmSerifDisplay.className} text-brand02 text-4xl`}>
               Tentang Kami
             </h2>
-            <p className="text-neutral01">
+            <p className="text-neutral01 text-sm lg:text-base">
               Kami percaya bahwa pertanian berkelanjutan adalah fondasi masa
               depan yang lebih hijau dan cerdas. Dengan semangat inovasi,
               kolaborasi, dan kepedulian terhadap lingkungan, kami menghadirkan
@@ -214,13 +219,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-20">
             <h2
-              className={`text-7xl font-bold bg-gradient-to-r from-brand01 via-brand01 to-brand02 bg-clip-text text-transparent pb-4 mb-8 ${dmSerifDisplay.className}`}
+              className={`text-6xl lg:text-7xl font-bold bg-gradient-to-r from-brand01 via-brand01 to-brand02 bg-clip-text text-transparent pb-4 mb-8 ${dmSerifDisplay.className}`}
             >
               Apa Itu DaurTani?
             </h2>
             <div className="w-24 h-1 bg-brand01 mx-auto mb-8 rounded-full"></div>
             <p
-              className={`text-xl text-slate-700 max-w-4xl mx-auto leading-relaxed ${dmSans.className}`}
+              className={`text-base lg:text-xl text-slate-700 max-w-4xl mx-auto leading-relaxed ${dmSans.className}`}
             >
               DaurTani adalah platform yang menjembatani petani dan pelaku
               industri untuk mengelola limbah pertanian, baik mentah maupun
@@ -231,82 +236,82 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Enhanced Interactive Circle Visualization */}
-          <div className="relative flex justify-center items-center my-32">
-            <div className="relative w-[400px] h-[400px] flex justify-center items-center">
-              {/* Main circle with glassmorphism effect */}
-              <div className="relative w-80 h-80 rounded-full bg-gradient-to-br from-brand01/90 via-brand01 to-emerald-600 flex items-center justify-center shadow-2xl backdrop-blur-lg border border-white/20">
-                <div className="absolute inset-4 rounded-full bg-white/10 backdrop-blur-md border border-white/30"></div>
-                <span
-                  className={`text-white text-2xl font-bold text-center z-10 ${dmSerifDisplay.className}`}
-                >
-                  Limbah
-                  <br />
-                  Pertanian
-                </span>
-
-                {/* Animated pulse rings */}
-                <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping"></div>
-                <div className="absolute inset-8 rounded-full border border-white/20 animate-pulse"></div>
-              </div>
-
-              {/* Category circles with enhanced effects */}
-              {wasteCategories.map((category, index) => (
-                <div
-                  key={index}
-                  className={`absolute w-48 h-48 cursor-pointer transition-all duration-500 hover:scale-110 group ${
-                    circleHoverIndex === index ? "z-20" : "z-10"
-                  }`}
-                  style={{
-                    transform: `rotate(${
-                      index * 120
-                    }deg) translate(240px) rotate(-${index * 120}deg)`,
-                    transformOrigin: "center center",
-                  }}
-                  onMouseEnter={() => setCircleHoverIndex(index)}
-                  onMouseLeave={() => setCircleHoverIndex(null)}
-                  onClick={() =>
-                    handleScrollToSection(
-                      category.ref as React.RefObject<HTMLDivElement>,
-                      index
-                    )
-                  }
-                >
-                  <div
-                    className={`relative w-full h-full rounded-full bg-gradient-to-br ${category.color} shadow-xl overflow-hidden border-4 border-white/30 backdrop-blur-sm`}
+          {isDesktop && (
+            <div className="relative justify-center items-center my-32 flex">
+              <div className="relative w-[400px] h-[400px] flex justify-center items-center">
+                {/* Main circle with glassmorphism effect */}
+                <div className="relative w-80 h-80 rounded-full bg-gradient-to-br from-brand01/90 via-brand01 to-emerald-600 flex items-center justify-center shadow-2xl backdrop-blur-lg border border-white/20">
+                  <div className="absolute inset-4 rounded-full bg-white/10 backdrop-blur-md border border-white/30"></div>
+                  <span
+                    className={`text-white text-2xl font-bold text-center z-10 ${dmSerifDisplay.className}`}
                   >
-                    <Image
-                      src={category.icon}
-                      alt={`${category.title} Icon`}
-                      fill
-                      className="object-cover opacity-30 group-hover:opacity-20 transition-opacity duration-300"
-                    />
+                    Limbah
+                    <br />
+                    Pertanian
+                  </span>
 
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent backdrop-blur-sm"></div>
+                  {/* Animated pulse rings */}
+                  <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping"></div>
+                  <div className="absolute inset-8 rounded-full border border-white/20 animate-pulse"></div>
+                </div>
 
-                    <div className="relative z-10 flex flex-col items-center justify-center w-full h-full p-6 text-center">
-                      <span
-                        className={`text-white text-xl font-bold mb-2 ${dmSerifDisplay.className}`}
-                      >
-                        {category.title}
-                      </span>
+                {/* Category circles with enhanced effects */}
+                {wasteCategories.map((category, index) => (
+                  <div
+                    key={index}
+                    className={`absolute w-48 h-48 cursor-pointer transition-all duration-500 hover:scale-110 group ${
+                      circleHoverIndex === index ? "z-20" : "z-10"
+                    }`}
+                    style={{
+                      transform: `rotate(${
+                        index * 120
+                      }deg) translate(240px) rotate(-${index * 120}deg)`,
+                      transformOrigin: "center center",
+                    }}
+                    onMouseEnter={() => setCircleHoverIndex(index)}
+                    onMouseLeave={() => setCircleHoverIndex(null)}
+                    onClick={() =>
+                      handleScrollToSection(
+                        category.ref as React.RefObject<HTMLDivElement>,
+                        index
+                      )
+                    }
+                  >
+                    <div
+                      className={`relative w-full h-full rounded-full bg-gradient-to-br ${category.color} shadow-xl overflow-hidden border-4 border-white/30 backdrop-blur-sm`}
+                    >
+                      <Image
+                        src={category.icon}
+                        alt={`${category.title} Icon`}
+                        fill
+                        className="object-cover opacity-30 group-hover:opacity-20 transition-opacity duration-300"
+                      />
 
-                      <div
-                        className={`text-white text-xs leading-tight overflow-hidden transition-all duration-500 ${
-                          circleHoverIndex === index
-                            ? "max-h-32 opacity-100"
-                            : "max-h-0 opacity-0"
-                        }`}
-                      >
-                        {category.description}
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent backdrop-blur-sm"></div>
+
+                      <div className="relative z-10 flex flex-col items-center justify-center w-full h-full p-6 text-center">
+                        <span
+                          className={`text-white text-xl font-bold mb-2 ${dmSerifDisplay.className}`}
+                        >
+                          {category.title}
+                        </span>
+
+                        <div
+                          className={`text-white text-xs leading-tight overflow-hidden transition-all duration-500 ${
+                            circleHoverIndex === index
+                              ? "max-h-32 opacity-100"
+                              : "max-h-0 opacity-0"
+                          }`}
+                        >
+                          {category.description}
+                        </div>
                       </div>
-
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Enhanced Detail Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
@@ -365,13 +370,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
             <h2
-              className={`text-7xl font-bold text-brand01 pb-4 mb-8 ${dmSerifDisplay.className}`}
+              className={`text-6xl lg:text-7xl font-bold text-brand01 pb-4 mb-8 ${dmSerifDisplay.className}`}
             >
               Marketplace
             </h2>
             <div className="w-24 h-1 bg-brand02 mx-auto mb-8 rounded-full"></div>
             <p
-              className={`text-xl text-slate-700 mb-8 max-w-3xl mx-auto leading-relaxed ${dmSans.className}`}
+              className={`text-base lg:text-xl text-slate-700 mb-8 max-w-3xl mx-auto leading-relaxed ${dmSans.className}`}
             >
               Temukan berbagai limbah pertanian berkualitas untuk kebutuhan
               industri, peternakan, atau usaha Anda. Semua produk diverifikasi
@@ -382,27 +387,33 @@ export default function Home() {
             <div className="flex justify-center gap-12 mb-12">
               <div className="text-center">
                 <div
-                  className={`text-3xl font-bold text-brand01 ${dmSerifDisplay.className}`}
+                  className={`text-2xl lg:text-3xl font-bold text-brand01 ${dmSerifDisplay.className}`}
                 >
                   1000+
                 </div>
-                <div className="text-slate-600">Produk Tersedia</div>
+                <div className="text-slate-600 text-sm lg:text-base">
+                  Produk Tersedia
+                </div>
               </div>
               <div className="text-center">
                 <div
-                  className={`text-3xl font-bold text-brand01 ${dmSerifDisplay.className}`}
+                  className={`text-2xl lg:text-3xl font-bold text-brand01 ${dmSerifDisplay.className}`}
                 >
                   500+
                 </div>
-                <div className="text-slate-600">Penjual Terpercaya</div>
+                <div className="text-slate-600 text-sm lg:text-base">
+                  Penjual Terpercaya
+                </div>
               </div>
               <div className="text-center">
                 <div
-                  className={`text-3xl font-bold text-brand01 ${dmSerifDisplay.className}`}
+                  className={`text-2xl lg:text-3xl font-bold text-brand01 ${dmSerifDisplay.className}`}
                 >
                   34
                 </div>
-                <div className="text-slate-600">Provinsi</div>
+                <div className="text-slate-600 text-sm lg:text-base">
+                  Provinsi
+                </div>
               </div>
             </div>
           </div>
@@ -428,7 +439,7 @@ export default function Home() {
           <div className="text-center">
             <Link
               href="/marketplace"
-              className={`inline-flex items-center bg-brand01 text-white px-12 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 ${dmSerifDisplay.className}`}
+              className={`inline-flex items-center bg-brand01 shadow-md text-white px-12 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 ${dmSerifDisplay.className}`}
             >
               Lihat Semua Produk
               <ArrowRight className="ml-3" size={20} />
@@ -437,89 +448,133 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="pt-0 border-b-[6px] border-brand01/60">
-        <div className="w-full mx-auto">
-          {/* <h2
-            className={`text-6xl font-bold text-center text-brand03 mb-12 ${dmSerifDisplay.className}`}
-          >
-            Produk Kami
-          </h2> */}
-          <div className="flex flex-row h-full w-screen">
-            {products.map((item, index) => (
-              <Link
-                href={item.url}
-                key={index}
-                className={`relative overflow-hidden transition-all duration-500 ease-in-out h-80 hover:cursor-pointer ${
-                  hoverIndex === index ? "w-4/5" : "w-1/2"
-                }`}
-                onMouseOver={() => setHoverIndex(index)}
-                onMouseLeave={() => setHoverIndex(null)}
+      {/* Panduan Olahan Section */}
+      <section className="pt-16 pb-32 bg-gradient-to-tr from-brand02/30 via-neutral01 to-teal-50 relative overflow-hidden border-b-[6px] border-brand02/40">
+        <div className="absolute inset-0 w-full h-[3px] bg-gradient-to-r from-transparent via-brand02/30 to-transparent"></div>
+        {/* Background patterns */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-brand01 rounded-full"></div>
+          <div className="absolute top-40 right-20 w-24 h-24 bg-emerald-500 rounded-full"></div>
+          <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-teal-500 rounded-full"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <h2
+              className={`text-6xl lg:text-7xl font-bold text-brand01 pb-4 mb-8 ${dmSerifDisplay.className}`}
+            >
+              Panduan Olahan
+            </h2>
+            <div className="w-24 h-1 bg-brand02 mx-auto mb-8 rounded-full"></div>
+            <p
+              className={`text-base lg:text-xl text-slate-700 mb-8 max-w-3xl mx-auto leading-relaxed ${dmSans.className}`}
+            >
+              Temukan berbagai artikel dan video tutorial tentang cara mengolah
+              limbah pertanian menjadi produk bernilai tinggi. Atau tanyakan
+              langsung ke AI Assistant kami untuk panduan yang lebih personal.
+            </p>
+          </div>
+
+          {/* Featured Articles/Videos */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <ArticleVideoCard
+              title="Mengolah Ampas Tebu Menjadi Pupuk Organik"
+              publishDate="2024-03-20"
+              description="Tutorial lengkap mengolah ampas tebu menjadi pupuk organik berkualitas tinggi untuk pertanian berkelanjutan."
+              type="video"
+              imageUrl="/images/ampasTebu.png"
+              url="/panduan-olahan"
+            />
+
+            <ArticleVideoCard
+              title="5 Cara Memanfaatkan Jerami Padi"
+              publishDate="2024-03-19"
+              description="Panduan praktis mengolah jerami padi menjadi pakan ternak, media tanam jamur, dan produk bernilai ekonomi lainnya."
+              type="article"
+              imageUrl="/images/jerami.jpg"
+              url="/panduan-olahan"
+            />
+
+            <ArticleVideoCard
+              title="Kompos dari Limbah Sayuran"
+              publishDate="2024-03-18"
+              description="Teknik membuat kompos berkualitas dari limbah sayuran dengan metode yang efektif dan ramah lingkungan."
+              type="video"
+              imageUrl="/images/sayuran.jpg"
+              url="/panduan-olahan"
+            />
+          </div>
+
+          {/* AI Assistant Section */}
+          <div className="bg-white/20 backdrop-blur-lg rounded-3xl border border-white/20 p-12 shadow-2xl text-center">
+            <h3
+              className={`text-4xl font-bold text-brand02 mb-6 ${dmSerifDisplay.className}`}
+            >
+              Tanya AI Assistant
+            </h3>
+            <p
+              className={`text-slate-700 mb-8 max-w-2xl mx-auto ${dmSans.className}`}
+            >
+              Tidak menemukan panduan yang Anda cari? Tanyakan langsung ke AI
+              Assistant kami untuk mendapatkan jawaban dan solusi yang personal
+              sesuai kebutuhan Anda.
+            </p>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const question = formData.get("question");
+                if (question) {
+                  router.push(
+                    `/panduan-olahan?q=${encodeURIComponent(
+                      question.toString()
+                    )}`
+                  );
+                }
+              }}
+              className="flex flex-col md:flex-row gap-4 max-w-3xl mx-auto mb-6"
+            >
+              <input
+                type="text"
+                name="question"
+                placeholder="Contoh: Bagaimana cara mengolah ampas tahu menjadi pakan ternak?"
+                className="flex-1 px-6 py-4 rounded-xl border-2 border-brand02/20 focus:border-brand02 outline-none bg-white/80 backdrop-blur-sm text-brand03 placeholder:text-brand03/50"
+              />
+              <button
+                type="submit"
+                className={`md:w-auto w-full bg-brand01 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 ${dmSerifDisplay.className}`}
               >
-                <div
-                  className={`w-full h-full absolute inset-0 transition-transform duration-700 ease-in-out ${
-                    hoverIndex === index ? "scale-105" : "scale-100"
-                  }`}
-                >
-                  <Image
-                    src={item.bg_url}
-                    alt="Background Image"
-                    fill
-                    className={`object-cover transition-all duration-700 ${
-                      hoverIndex === index ? "brightness-90" : "brightness-75"
-                    }`}
-                    style={{
-                      objectPosition: `center ${index === 0 ? "70%" : "50%"}`,
-                    }}
-                  />
-                  <div
-                    className={`w-full h-full absolute inset-0 bg-brand03/55 transition-opacity duration-500 ${
-                      hoverIndex !== index
-                        ? "opacity-80 backdrop-blur-md"
-                        : "opacity-70 bg-brand03/70"
-                    }`}
-                  ></div>
-                </div>
+                Tanya Sekarang
+                <Bot size={20} />
+              </button>
+            </form>
 
-                <div
-                  className={`bg-brand02/20 backdrop-blur-md p-4 rounded-full absolute top-4 right-4 z-40 transition-all duration-200 hover:opacity-80 shadow-lg shadow-black/50 ${
-                    hoverIndex === index
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-5 opacity-0"
-                  }`}
-                >
-                  <ArrowRight
-                    className="text-[#d9a641]"
-                    width={30}
-                    height={30}
-                  />
-                </div>
-                <div
-                  className={`w-full h-full p-6 flex flex-col items-center justify-center relative z-10 ${dmSerifDisplay.className}`}
-                >
-                  <h3
-                    className={`text-3xl font-semibold text-brand02 transition-all duration-500 max-w-xs break-words text-center ${
-                      hoverIndex === index
-                        ? "transform-none"
-                        : "origin-center absolute"
-                    }`}
-                  >
-                    {item.judul}
-                  </h3>
+            <div className="flex flex-wrap justify-center gap-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm text-brand03">
+                #PupukOrganik
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm text-brand03">
+                #PakanTernak
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm text-brand03">
+                #Kompos
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm text-brand03">
+                #BioGas
+              </div>
+            </div>
+          </div>
 
-                  <div
-                    className={`${
-                      dmSans.className
-                    } text-neutral01 overflow-hidden text-center transition-all duration-500 ease-in-out max-w-xl ${
-                      hoverIndex === index
-                        ? "max-h-56 opacity-100 mt-6"
-                        : "max-h-0 opacity-0 mt-0"
-                    }`}
-                  >
-                    <p>{item.deskripsi}</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
+          {/* CTA Button */}
+          <div className="text-center mt-12">
+            <Link
+              href="/panduan-olahan"
+              className={`inline-flex items-center bg-brand01 shadow-md text-white px-12 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 ${dmSerifDisplay.className}`}
+            >
+              Lihat Semua Panduan
+              <ArrowRight className="ml-3" size={20} />
+            </Link>
           </div>
         </div>
       </section>
@@ -527,7 +582,7 @@ export default function Home() {
       {/* Enhanced CTA Section */}
       <section className="relative py-32 overflow-hidden">
         {/* Animated background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-brand01/40 via-neutral01 to-neutral01"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-brand02/30 via-neutral01 to-neutral01"></div>
 
         {/* Floating elements */}
         <div className="absolute top-20 left-20 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>
@@ -607,8 +662,8 @@ export default function Home() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
-                href="/register"
-                className={`group bg-brand01 text-neutral01 px-12 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
+                href="/auth/login"
+                className={`group bg-brand01 justify-center shadow-md text-neutral01 w-full lg:w-1/4 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
               >
                 Daftar Gratis
                 <ArrowRight
@@ -619,7 +674,7 @@ export default function Home() {
 
               <Link
                 href="/marketplace"
-                className={`group bg-white/20 border-2 border-brand02/40 backdrop-blur-md text-brand02 px-12 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
+                className={`group bg-white/20 justify-center shadow-md border-2 border-brand02/40 backdrop-blur-md text-brand02 w-full lg:w-1/4 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center ${dmSerifDisplay.className}`}
               >
                 Jelajahi Marketplace
                 <ArrowRight

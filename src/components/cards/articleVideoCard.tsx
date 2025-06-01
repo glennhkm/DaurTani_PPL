@@ -43,9 +43,9 @@ export const ArticleVideoCard = ({
           <time dateTime={publishDate}>{publishDate}</time>
         </div>
         
-        <h3 className="text-lg font-semibold text-brand03 mb-2 line-clamp-2">{title}</h3>
+        <h3 className="font-semibold text-brand03 mb-2 line-clamp-2 text-sm md:text-lg">{title}</h3>
         
-        <p className="text-sm text-brand03/70 mb-4 line-clamp-3 flex-grow">{description}</p>
+        <p className="text-xs md:text-sm text-brand03/70 mb-4 line-clamp-3 flex-grow">{description}</p>
         
         <a
           href={url}

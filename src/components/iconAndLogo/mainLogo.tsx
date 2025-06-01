@@ -1,9 +1,10 @@
 import React from "react";
 
-export const MainLogo = ({ width }: { width?: string }) => {
+export const MainLogo = ({ width, className }: { width?: string, className?: string }) => {
   return (
     <svg
       width={width || "100"}
+      className={className}
       viewBox="0 0 910 275"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

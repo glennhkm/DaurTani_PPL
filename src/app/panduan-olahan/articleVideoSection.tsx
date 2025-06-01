@@ -93,17 +93,10 @@ const ArticleVideoSection = () => {
   }, []);
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-6 px-3 lg:px-0">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-semibold text-brand03">Temukan Panduan</h3>
-          <button 
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 text-brand01 hover:text-brand01/80 transition-colors"
-          >
-            <SlidersHorizontal size={16} className="text-brand03" />
-            <span className="text-sm text-brand03">{showFilters ? "Sembunyikan Filter" : "Tampilkan Filter"}</span>
-          </button>
         </div>
 
         <div className="flex items-center gap-4 bg-neutral01 rounded-xl p-3 shadow-sm border border-brand01/20">
@@ -116,42 +109,10 @@ const ArticleVideoSection = () => {
             className="w-full focus:outline-none bg-transparent placeholder:italic placeholder:opacity-50 text-brand03/80"
           />
         </div>
-
-        {showFilters && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-brand01/5 rounded-xl border border-brand01/20 animate-fadeIn">
-            <div className="flex items-center gap-3">
-              <FileType size={18} className="text-brand01" />
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="p-2 rounded-lg border border-brand01/30 text-brand03/80 bg-neutral01 focus:outline-none focus:ring-2 focus:ring-brand01/30 w-full"
-              >
-                <option value="all">Semua Tipe</option>
-                {uniqueTypes.map((type, i) => (
-                  <option key={i} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Calendar size={18} className="text-brand01" />
-              <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                className="p-2 rounded-lg border border-brand01/30 text-brand03/80 bg-neutral01 focus:outline-none focus:ring-2 focus:ring-brand01/30 w-full"
-              >
-                <option value="newest">Terbaru</option>
-                <option value="oldest">Terlama</option>
-              </select>
-            </div>
-          </div>
-        )}
       </div>
 
       {filteredResults.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 mt-4">
           {filteredResults.map((item, index) => (
             <ArticleVideoCard key={index} {...item} />
           ))}

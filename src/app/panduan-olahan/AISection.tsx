@@ -1,20 +1,38 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Info, Loader2, ArrowDown } from "lucide-react";
+import { Send, Bot, User, Info, Loader2 } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 
-const AISection = () => {
-  const [messages, setMessages] = useState([
+// Interface untuk pesan
+interface Message {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+interface AISectionProps {
+  initialQuestion?: string | null;
+}
+
+const AISection: React.FC<AISectionProps> = ({ initialQuestion }) => {
+  const [messages, setMessages] = useState<Message[]>([
     {
       role: "system",
+      content: "Anda adalah asisten AI yang ahli dalam pengolahan limbah pertanian. Berikan jawaban yang praktis, informatif, dan mudah dipahami dalam bahasa Indonesia."
+    },
+    {
+      role: "assistant", 
       content: "Halo! Saya siap membantu pertanyaan Anda seputar pengolahan limbah pertanian. Silakan ketik pertanyaan Anda."
     }
   ]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialQuestion || "");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const firstMessageRef = useRef<HTMLDivElement | null>(null);
   const inputMessageRef = useRef<HTMLInputElement | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const initialQuestionProcessedRef = useRef(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   
   const sampleQuestions = [
     "Bagaimana cara mengolah jerami padi menjadi pupuk organik?",
@@ -24,8 +42,20 @@ const AISection = () => {
   ];
 
   useEffect(() => {
-    firstScroll()
+    firstScroll();
   }, []);
+
+  // Handle initial question
+  useEffect(() => {
+    const processInitialQuestion = async () => {
+      if (initialQuestion && !initialQuestionProcessedRef.current && !isTyping) {
+        initialQuestionProcessedRef.current = true;
+        await handleSend(initialQuestion);
+      }
+    };
+
+    processInitialQuestion();
+  }, [initialQuestion, isTyping]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -50,43 +80,125 @@ const AISection = () => {
       }
     }, 400);
   };
-  
 
-  const handleSend = () => {
-    if (!input.trim()) return;    
+  // Fungsi untuk mengirim pesan ke API dengan streaming
+  const sendMessageToAPI = async (messagesHistory: Message[], onChunk: (chunk: string) => void): Promise<void> => {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ messages: messagesHistory }),
+      signal: abortControllerRef.current?.signal,
+    });
 
-    const newUserMessage = {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('No reader available');
+    }
+
+    const decoder = new TextDecoder();
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') return;
+            
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                onChunk(parsed.content);
+              }
+            } catch (e) {
+              // Skip invalid JSON lines
+              continue;
+            }
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  };
+
+  const handleSend = async (forcedInput?: string) => {
+    const messageToSend = forcedInput || input;
+    if (!messageToSend.trim() || isTyping) return;
+
+    // Batalkan request sebelumnya jika ada
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+
+    const newUserMessage: Message = {
       role: "user",
-      content: input
+      content: messageToSend.trim()
     };
     
-    setMessages((prev) => [...prev, newUserMessage]);
-    scrollToBottom()
+    const updatedMessages = [...messages, newUserMessage];
+    setMessages(updatedMessages);
+    scrollToBottom();
     setInput("");
     setIsTyping(true);
-    
-    setTimeout(() => {
-      let response;
+    setIsGenerating(true);
+
+    try {
+      let fullResponse = '';
       
-      if (input.toLowerCase().includes("jerami") || input.toLowerCase().includes("padi")) {
-        response = "Jerami padi dapat diolah menjadi pupuk organik melalui proses pengomposan. Pertama, potong jerami menjadi ukuran 5-10cm, lalu tumpuk dan siram dengan larutan aktivator EM4 yang sudah dicampur air dan molase. Tutup dengan terpal dan biarkan selama 14-21 hari dengan pembalikan setiap 7 hari. Pupuk organik dari jerami padi sangat baik untuk meningkatkan kesuburan tanah dan mengurangi penggunaan pupuk kimia.";
-      } else if (input.toLowerCase().includes("biogas") || input.toLowerCase().includes("ternak")) {
-        response = "Untuk membuat biogas dari kotoran ternak, Anda memerlukan digester biogas sederhana yang terdiri dari tangki penampung, pipa saluran gas, dan penampung gas. Kotoran ternak dicampur dengan air dengan perbandingan 1:1, kemudian dimasukkan ke dalam digester yang kedap udara. Proses fermentasi anaerob akan menghasilkan gas metana dalam 7-10 hari. Biogas dapat digunakan untuk memasak, penerangan, atau bahkan pembangkit listrik skala kecil.";
-      } else if (input.toLowerCase().includes("ekonomi") || input.toLowerCase().includes("manfaat")) {
-        response = "Pengolahan limbah pertanian memberikan beberapa manfaat ekonomi: (1) Menciptakan produk bernilai tambah seperti pupuk organik, pakan ternak, dan biogas; (2) Mengurangi biaya produksi pertanian dengan memanfaatkan sumber daya lokal; (3) Membuka peluang usaha baru dan menciptakan lapangan kerja di desa; (4) Mengurangi dampak lingkungan yang dapat menyebabkan kerugian ekonomi jangka panjang. Bahkan limbah seperti sekam padi dapat diolah menjadi arang sekam yang bisa dijual dengan harga cukup tinggi.";
-      } else {
-        response = `Terima kasih atas pertanyaan Anda tentang "${input}". Limbah pertanian merupakan sumber daya berharga yang dapat diolah menjadi berbagai produk bernilai seperti pupuk organik, pakan ternak, biogas, dan bahan kerajinan. Proses pengolahan yang tepat tidak hanya mengurangi masalah lingkungan tetapi juga memberi nilai tambah ekonomi bagi petani. Untuk informasi lebih spesifik, silakan tanyakan tentang jenis limbah pertanian tertentu yang ingin Anda olah.`;
+      // Kirim request ke API dengan callback untuk setiap chunk
+      await sendMessageToAPI(updatedMessages, (chunk) => {
+        fullResponse += chunk;
+        const newBotMessage: Message = {
+          role: "assistant",
+          content: fullResponse
+        };
+        setMessages([...updatedMessages, newBotMessage]);
+        scrollToBottom();
+      });
+
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      
+      // Jangan tampilkan error jika request dibatalkan
+      if (error.name === 'AbortError') {
+        return;
       }
-      
-      const newBotMessage = {
+
+      // Tampilkan pesan error ke user
+      const errorMessage: Message = {
         role: "assistant",
-        content: response
+        content: "Maaf, terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi."
       };
 
-      setMessages((prev) => [...prev, newBotMessage]);
-      scrollToBottom()
+      setMessages(prev => [...prev, errorMessage]);
+      scrollToBottom();
+    } finally {
       setIsTyping(false);
-    }, 1500);
+      setIsGenerating(false);
+      abortControllerRef.current = null;
+    }
+  };
+
+  const handleStop = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsTyping(false);
+      setIsGenerating(false);
+    }
   };
 
   const handleSampleQuestion = (question: string) => {
@@ -111,6 +223,7 @@ const AISection = () => {
             key={idx}
             onClick={() => handleSampleQuestion(question)}
             className="text-left text-sm p-3 bg-brand01/10 hover:bg-brand01/20 rounded-lg border border-brand01/20 transition-colors duration-200 text-brand03/80"
+            disabled={isTyping}
           >
             {question}
           </button>
@@ -150,7 +263,25 @@ const AISection = () => {
                       : "bg-brand01/10 text-brand03/80 border border-brand01/20 rounded-bl-none"
                   }`}
                 >
-                  {msg.content}
+                  {msg.role === "assistant" ? (
+                    <div className="prose prose-sm max-w-none
+                      prose-headings:text-brand03/90 prose-headings:font-semibold prose-headings:mt-4 prose-headings:mb-2
+                      prose-p:text-brand03/80 prose-p:leading-relaxed prose-p:my-2
+                      prose-strong:text-brand03/90 prose-strong:font-semibold
+                      prose-ul:my-2 prose-ul:pl-4
+                      prose-ol:my-2 prose-ol:pl-4
+                      prose-li:text-brand03/80 prose-li:my-1
+                      prose-code:bg-brand01/20 prose-code:px-1 prose-code:rounded prose-code:text-brand03/90
+                      prose-pre:bg-brand01/10 prose-pre:border prose-pre:border-brand01/20 prose-pre:rounded-lg
+                      prose-blockquote:border-l-4 prose-blockquote:border-brand01/40 prose-blockquote:pl-4 prose-blockquote:italic"
+                    >
+                      <ReactMarkdown>
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
                 
                 {msg.role === "user" && (
@@ -177,7 +308,6 @@ const AISection = () => {
         )}
         <div className="mt-20"></div>
         <div ref={messagesEndRef} />
-        
       </div>
       
       <div className="flex items-center gap-3 bg-neutral01 rounded-xl p-3 border border-brand01/30 shadow-sm focus-within:ring-2 focus-within:ring-brand01/30 transition-all">
@@ -191,17 +321,39 @@ const AISection = () => {
           className="w-full focus:outline-none bg-transparent placeholder:text-brand03/50 text-brand03/80 px-2"
           disabled={isTyping}
         />
-        <button
-          onClick={handleSend}
-          disabled={!input.trim() || isTyping}
-          className={`${
-            !input.trim() || isTyping 
-              ? "text-brand01/50 cursor-not-allowed" 
-              : "text-brand01 hover:bg-brand01/10"
-          } p-2 rounded-full transition-colors`}
-        >
-          <Send size={20} />
-        </button>
+        {isGenerating ? (
+          <button
+            onClick={handleStop}
+            className="p-2 rounded-full text-red-500 hover:bg-red-50 transition-colors"
+            title="Hentikan generasi"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            </svg>
+          </button>
+        ) : (
+          <button
+            onClick={() => handleSend()}
+            disabled={!input.trim() || isTyping}
+            className={`${
+              !input.trim() || isTyping
+                ? "text-brand01/50 cursor-not-allowed"
+                : "text-brand01 hover:bg-brand01/10"
+            } p-2 rounded-full transition-colors`}
+          >
+            <Send size={20} />
+          </button>
+        )}
       </div>
       
       <p className="text-xs text-center text-brand03/50 mt-2">

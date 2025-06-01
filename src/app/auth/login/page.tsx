@@ -5,8 +5,7 @@ import { GoogleIcon } from "@/components/icons/googleIcon";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase/client";
 import API from "@/lib/utils/apiCreate";
-import { CornerUpLeft, Loader } from "lucide-react";
-// import { useAuth } from "@/contexts/AuthContext";
+import { CornerUpLeft, Loader2 } from "lucide-react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -106,7 +105,7 @@ const Login = () => {
         className={`disabled:bg-cyan-800/60 disabled:cursor-not-allowed bg-cyan-700 hover:bg-cyan-800 py-2.5 rounded-xl shadow-lg cursor-pointer text-neutral01 duration-200`}
       >
         {isLoading ? (
-          <Loader
+          <Loader2
             className="animate-spin mx-auto opacity-50"
             style={{ animationDuration: "3s" }}
           />
@@ -160,7 +159,7 @@ const Login = () => {
           className={`w-1/2 rounded-lg mt-12 mx-auto block bg-brand01 hover:bg-[#55774F] text-neutral01 py-2 px-4 transition-all duration-200 cursor-pointer shadow-lg disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           {loading ? (
-            <Loader
+            <Loader2
               className="animate-spin mx-auto opacity-50"
               style={{ animationDuration: "3s" }}
             />

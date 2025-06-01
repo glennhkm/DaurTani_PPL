@@ -7,6 +7,18 @@ export interface UnitPrice {
   equalWith: number;
 }
 
+export interface Store {
+  _id: string;
+  storeName: string;
+  description?: string;
+  averageRating: number;
+  storeAddress?: string;
+  whatsAppNumber?: string;
+  instagram?: string;
+  facebook?: string;
+  officialWebsite?: string;
+}
+
 export interface Product {
   _id: string;
   wasteName: string;
@@ -15,9 +27,6 @@ export interface Product {
   averageRating: number;
   createdAt: string;
   updatedAt: string;
-  store: {
-    _id: string;
-    storeName: string;
-  };
+  store: Store;
   unitPrices: UnitPrice[];
 } 

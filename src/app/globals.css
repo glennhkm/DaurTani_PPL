@@ -11,7 +11,10 @@
   --color-neutral01: #F9F5EC;
 }
 
-/* Set all button to cursor pointer */
 button {
   cursor: pointer;
+}
+
+html {
+  overflow-x: hidden;
 }

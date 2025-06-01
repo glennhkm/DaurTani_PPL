@@ -12,6 +12,7 @@ import {
   MapPin,
   Package,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
 import { ProductCard, ProductCardProps } from "@/components/cards/productCard";
@@ -52,11 +53,17 @@ const SearchControls = ({
   filteredAndSortedProducts: ProductCardProps[];
   productsData: ProductCardProps[];
 }) => (
-  <div className={`space-y-6 ${isSticky ? 'bg-neutral01 px-20 pb-2 pt-2 shadow-lg border-b border-brand03/10' : ''}`}>
+  <div
+    className={`space-y-6 ${
+      isSticky
+        ? "bg-neutral01 px-20 pb-2 pt-2 shadow-lg border-b border-brand03/10"
+        : ""
+    }`}
+  >
     {/* Search, Filter and Sort Controls */}
     <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
       {/* Search Bar */}
-      <div className="relative flex-1 order-3 lg:order-1 w-full">
+      <div className="relative w-full lg:w-2/3">
         <div className="relative flex">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-brand03/60 w-5 h-5" />
           <input
@@ -70,7 +77,7 @@ const SearchControls = ({
                 handleSearch();
               }
             }}
-            className="flex-1 pl-12 pr-16 py-3 rounded-2xl border border-brand03/20 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 bg-transparent text-brand03 placeholder-brand03/60 shadow-sm"
+            className="flex-1 pl-12 pr-16 py-3 bg-neutral01 rounded-2xl border border-brand03/20 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 text-brand03 placeholder-brand03/60 shadow-sm"
           />
           <button
             onClick={handleSearch}
@@ -80,51 +87,41 @@ const SearchControls = ({
           </button>
         </div>
       </div>
-      {/* Filter Controls */}
-      <div className="flex gap-3 order-2 lg:order-2">
-        {/* Location Filter */}
-        <div className="relative">
-          <select
-            value={selectedLocation}
-            onChange={(e) => setSelectedLocation(e.target.value)}
-            className="appearance-none bg-transparent border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm"
-          >
-            <option value="">Semua Lokasi</option>
-            {locations.map((location) => (
-              <option key={location} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
-          <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
+      <div className="flex w-full lg:w-1/3 gap-2">
+        {/* Filter Controls */}
+        <div className="flex gap-3 w-1/2">
+          {/* Location Filter */}
+          <div className="relative w-full">
+            <select
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              className="appearance-none bg-neutral01 w-full border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm"
+            >
+              <option value="">Semua Lokasi</option>
+              {locations.map((location) => (
+                <option key={location} value={location}>
+                  {location}
+                </option>
+              ))}
+            </select>
+            <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
+          </div>
         </div>
-        {/* Toggle Filters Button */}
-        {/* <button
-          onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-2 px-4 py-3 rounded-2xl border transition-all duration-300 ${
-            showFilters
-              ? "bg-brand01 text-neutral01 border-brand01"
-              : "bg-neutral01 text-brand03 border-brand03/20 hover:border-brand01"
-          }`}
-        >
-          <Filter className="w-4 h-4" />
-          <span className="text-sm font-medium">Filter</span>
-        </button> */}
-      </div>
-      {/* Sort Dropdown */}
-      <div className="relative order-1 lg:order-3">
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="appearance-none bg-transparent border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm min-w-[160px]"
-        >
-          <option value="featured">Unggulan</option>
-          <option value="price-low">Harga Terendah</option>
-          <option value="price-high">Harga Tertinggi</option>
-          <option value="rating">Rating Tertinggi</option>
-          <option value="stock">Stok Terbanyak</option>
-        </select>
-        <ArrowUpDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
+        {/* Sort Dropdown */}
+        <div className="relative w-1/2">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="appearance-none w-full bg-neutral01 border border-brand03/20 rounded-2xl px-4 py-3 pr-10 text-brand03 focus:border-brand01 focus:ring-2 focus:ring-brand01/20 outline-none transition-all duration-300 cursor-pointer shadow-sm min-w-[160px]"
+          >
+            <option value="featured">Unggulan</option>
+            <option value="price-low">Harga Terendah</option>
+            <option value="price-high">Harga Tertinggi</option>
+            <option value="rating">Rating Tertinggi</option>
+            <option value="stock">Stok Terbanyak</option>
+          </select>
+          <ArrowUpDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brand03/60 w-4 h-4 pointer-events-none" />
+        </div>
       </div>
     </div>
     {/* Results Summary */}
@@ -132,7 +129,8 @@ const SearchControls = ({
       <div className="flex items-center gap-2">
         <Package className="w-4 h-4" />
         <span>
-          Menampilkan {filteredAndSortedProducts.length} dari {productsData.length} produk
+          Menampilkan {filteredAndSortedProducts.length} dari{" "}
+          {productsData.length} produk
         </span>
       </div>
       {(searchQuery || selectedLocation) && (
@@ -168,6 +166,7 @@ interface Product {
   store: {
     _id: string;
     storeName: string;
+    storeAddress: string;
   };
   unitPrices: UnitPrice[];
 }
@@ -225,11 +224,11 @@ export default function Marketplace() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await API.get('/farm-wastes');
+        const response = await API.get("/farm-wastes");
         setProducts(response.data.data);
       } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Failed to fetch products');
+        console.error("Error fetching products:", err);
+        setError("Failed to fetch products");
       } finally {
         setLoading(false);
       }
@@ -240,23 +239,27 @@ export default function Marketplace() {
 
   // Convert API products to ProductCardProps format
   const productsData = useMemo(() => {
-    return products.map(product => {
+    return products.map((product) => {
       // Find base unit price
-      const baseUnit = product.unitPrices.find(up => up.isBaseUnit) || product.unitPrices[0];
+      const baseUnit =
+        product.unitPrices.find((up) => up.isBaseUnit) || product.unitPrices[0];
       const pricePerUnit = baseUnit ? baseUnit.pricePerUnit : 0;
-      const unit = baseUnit ? baseUnit.unit : '';
-      
+      const unit = baseUnit ? baseUnit.unit : "";
+
       // Calculate total stock across all units
-      const totalStock = product.unitPrices.reduce((sum, up) => sum + (up.stock || 0), 0);
+      const totalStock = product.unitPrices.reduce(
+        (sum, up) => sum + (up.stock || 0),
+        0
+      );
 
       return {
         id: product._id,
-        image: product.imageUrls[0] || '/images/placeholder.png',
+        image: product.imageUrls[0] || "/images/placeholder.png",
         title: product.wasteName,
         description: product.description,
-        price: `Rp ${pricePerUnit.toLocaleString('id-ID')}/${unit}`,
+        price: `Rp ${pricePerUnit.toLocaleString("id-ID")}/${unit}`,
         rating: product.averageRating || 0,
-        location: product.store.storeName,
+        location: product.store.storeAddress,
         stock: totalStock,
         imageUrls: product.imageUrls,
         unitPrices: product.unitPrices,
@@ -289,7 +292,11 @@ export default function Marketplace() {
 
   // Dynamically set placeholder height to match sticky search bar
   useEffect(() => {
-    if (isSearchSticky && searchSectionRef.current && stickyPlaceholderRef.current) {
+    if (
+      isSearchSticky &&
+      searchSectionRef.current &&
+      stickyPlaceholderRef.current
+    ) {
       const height = searchSectionRef.current.getBoundingClientRect().height;
       stickyPlaceholderRef.current.style.height = `${height}px`;
     } else if (stickyPlaceholderRef.current) {
@@ -348,38 +355,39 @@ export default function Marketplace() {
     setSelectedLocation("");
   };
 
-  // Loading state
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-neutral01 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand01 mb-4"></div>
-          <p className="text-brand03">Memuat produk...</p>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center">
+  //       <div className="text-center">
+  //         <Loader2 className="w-12 h-12 text-brand01 animate-spin mx-auto mb-4" />
+  //         <p className="text-brand03 text-lg">Memuat produk</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   // Error state
-  if (error) {
-    return (
-      <div className="min-h-screen bg-neutral01 flex items-center justify-center p-4">
-        <div className="text-center max-w-md">
-          <div className="text-red-500 mb-4">
-            <AlertCircle className="w-12 h-12 mx-auto" />
-          </div>
-          <h2 className="text-xl font-semibold text-brand03 mb-2">Gagal memuat produk</h2>
-          <p className="text-brand03/70 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-brand01 text-white px-6 py-2 rounded-lg hover:bg-brand01/90 transition-colors"
-          >
-            Coba Lagi
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen bg-neutral01 flex items-center justify-center p-4">
+  //       <div className="text-center max-w-md">
+  //         <div className="text-red-500 mb-4">
+  //           <AlertCircle className="w-12 h-12 mx-auto" />
+  //         </div>
+  //         <h2 className="text-xl font-semibold text-brand03 mb-2">
+  //           Gagal memuat produk
+  //         </h2>
+  //         <p className="text-brand03/70 mb-4">{error}</p>
+  //         <button
+  //           onClick={() => window.location.reload()}
+  //           className="bg-brand01 text-white px-6 py-2 rounded-lg hover:bg-brand01/90 transition-colors"
+  //         >
+  //           Coba Lagi
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-neutral01">
@@ -392,7 +400,7 @@ export default function Marketplace() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-brand03/60 to-brand03/85 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand03/40 to-brand03/80 backdrop-blur-sm" />
         </div>
         <div className="absolute top-0 left-0 w-full h-full z-1 opacity-20">
           <div className="absolute top-20 left-[10%] w-32 h-32 rounded-full bg-brand01 blur-3xl"></div>
@@ -419,9 +427,9 @@ export default function Marketplace() {
         </div>
       </div>
 
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-20 py-16 md:pb-20 relative">
+      <div className="w-full mx-auto px-3 lg:px-20 py-16 md:pb-20 relative bg-gradient-to-b from-brand02/30 via-neutral01 to-neutral01 border-t-[6px] border-brand02/55">
         <div className="w-full md:w-auto mx-auto absolute left-1/2 -translate-x-1/2 -top-[2rem] lg:-top-[4.5rem]">
-          <div className="bg-neutral01 rounded-2xl p-2 lg:p-6 shadow-xl grid grid-cols-4 gap-4 md:gap-6">
+          <div className="bg-neutral01 rounded-3xl p-2 lg:p-6 shadow-xl shadow-brand02/20 grid grid-cols-4 gap-4 md:gap-6 border-2 border-brand02/60">
             {statsData.map((item, index) => (
               <StatCard key={index} number={item.number} label={item.label} />
             ))}
@@ -476,15 +484,28 @@ export default function Marketplace() {
         </div>
 
         {/* Placeholder to prevent content jump */}
-        <div ref={stickyPlaceholderRef} className="transition-all duration-300"></div>
+        <div
+          ref={stickyPlaceholderRef}
+          className="transition-all duration-300"
+        ></div>
+
+        {loading && (
+          <div className="min-h-[40vh] flex items-center justify-center">
+            <div className="text-center">
+              <Loader2 className="w-12 h-12 text-brand01 animate-spin mx-auto mb-4" />
+              <p className="text-brand03 text-lg">Memuat produk</p>
+            </div>
+          </div>
+        )}
 
         {/* Products Grid */}
-        {filteredAndSortedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+        {filteredAndSortedProducts.length > 0 && (
+          <div className="grid grid-cols-2 lg:grid-cols-3 md:grid-cols-3 gap-2 md:gap-4 w-full">
             {filteredAndSortedProducts.map((product) => (
               <ProductCard
                 key={product.id}
-                image={product.imageUrls[0] || '/images/placeholder.png'}
+                id={product.id}
+                image={product.imageUrls[0] || "/images/placeholder.png"}
                 title={product.title}
                 description={product.description}
                 price={product.price}
@@ -495,7 +516,8 @@ export default function Marketplace() {
               />
             ))}
           </div>
-        ) : (
+        )}
+        {(filteredAndSortedProducts.length === 0 && !loading && !error) && (
           <div className="text-center py-16">
             <div className="max-w-md mx-auto">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-brand03/10 flex items-center justify-center">
@@ -512,6 +534,25 @@ export default function Marketplace() {
                 className="bg-brand01 hover:bg-brand01/90 text-neutral01 px-6 py-2.5 rounded-2xl transition-all duration-300 font-medium"
               >
                 Reset Pencarian
+              </button>
+            </div>
+          </div>
+        )}
+        {error && (
+          <div className="min-h-[40vh] flex items-center justify-center p-4">
+            <div className="text-center max-w-md">
+              <div className="text-red-500 mb-4">
+                <AlertCircle className="w-12 h-12 mx-auto" />
+              </div>
+              <h2 className="text-xl font-semibold text-brand03 mb-2">
+                Gagal memuat produk
+              </h2>
+              <p className="text-brand03/70 mb-4">Silahkan coba beberapa saat kemudian</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-brand01 text-white px-6 py-2 rounded-lg hover:bg-brand01/90 transition-colors"
+              >
+                Coba Lagi
               </button>
             </div>
           </div>

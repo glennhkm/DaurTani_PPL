@@ -8,16 +8,18 @@ import {
   Loader2,
   AlertCircle,
   Store as StoreIcon,
+  Phone,
+  Instagram,
+  Facebook,
+  Globe,
+  MapPin,
 } from "lucide-react";
 import { dmSerifDisplay } from "@/components/fonts/dmSerifDisplay";
-import axios from "axios";
 import { useAuth } from "@/contexts/AuthContext";
 import API from "@/lib/utils/apiCreate";
 import { supabase } from "@/lib/supabase/client";
+import toast from "react-hot-toast";
 
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
-// Form for creating a new store
 export default function CreateStore() {
   const router = useRouter();
   const { accessToken, user } = useAuth();
@@ -25,14 +27,16 @@ export default function CreateStore() {
   // Form state
   const [formData, setFormData] = useState({
     storeName: "",
+    storeAddress: "",
     description: "",
-    // In a real app, these would be handled properly
-    // storeAddressId: "placeholder_address_id", // This would come from an address form
+    whatsAppNumber: "",
+    instagram: "",
+    facebook: "",
+    officialWebsite: "",
   });
   
   // Loading and error states
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   // Check authentication
@@ -41,14 +45,17 @@ export default function CreateStore() {
       try {
         const { data } = await supabase.auth.getSession();
         if (!data.session) {
+          toast.error("Anda harus login terlebih dahulu.");
           router.push("/auth/login");
         }
       } catch (error) {
+        toast.error("Anda harus login terlebih dahulu.");
         router.push("/auth/login");
       }
     };
     checkAuth();
   }, [accessToken, router]);
+  
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -64,17 +71,27 @@ export default function CreateStore() {
     
     // Validation
     if (!formData.storeName) {
-      setError("Nama toko harus diisi.");
+      toast.error("Nama toko harus diisi.");
+      return;
+    }
+
+    if (!formData.storeAddress) {
+      toast.error("Lokasi toko harus diisi.");
+      return;
+    }
+
+    // Validate at least one contact method is provided
+    if (!formData.whatsAppNumber && !formData.instagram && !formData.facebook && !formData.officialWebsite) {
+      toast.error("Setidaknya satu metode kontak harus diisi (WhatsApp, Instagram, Facebook, atau Website).");
       return;
     }
 
     if (!accessToken) {
-      setError("Anda harus login terlebih dahulu.");
+      toast.error("Anda harus login terlebih dahulu.");
       return;
     }
     
     setIsSubmitting(true);
-    setError(null);
     
     try {
       const response = await API.post(`/stores`, formData, {
@@ -85,6 +102,7 @@ export default function CreateStore() {
       });
       
       setSuccess(true);
+      toast.success("Toko berhasil dibuat! Mengalihkan ke halaman toko...");
       
       // Redirect to the store page after a short delay
       setTimeout(() => {
@@ -92,39 +110,19 @@ export default function CreateStore() {
       }, 2000);
     } catch (err: any) {
       console.error("Error creating store:", err);
-      setError(err.response?.data?.message || "Gagal membuat toko. Silakan coba lagi.");
+      toast.error(err.response?.data?.message || "Gagal membuat toko. Silakan coba lagi.");
     } finally {
       setIsSubmitting(false);
     }
   };
   
   return (
-    <div className="min-h-screen bg-neutral01 pt-8 pb-16">
+    <div className="min-h-screen pt-8 pb-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
         
         <h1 className={`text-3xl font-bold text-slate-800 mb-8 ${dmSerifDisplay.className}`}>
           Buat Toko Baru
-        </h1>
-        
-        {/* Success Message */}
-        {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center mb-6">
-            <div className="bg-green-100 rounded-full p-1 mr-3">
-              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <span className="text-green-700">Toko berhasil dibuat! Mengalihkan ke halaman toko...</span>
-          </div>
-        )}
-        
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center mb-6">
-            <AlertCircle className="w-5 h-5 text-red-600 mr-3" />
-            <span className="text-red-700">{error}</span>
-          </div>
-        )}
+        </h1>      
         
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-center mb-6">
@@ -151,6 +149,25 @@ export default function CreateStore() {
             </div>
             
             <div>
+              <label htmlFor="storeAddress" className="block text-sm font-medium text-slate-700 mb-1">
+                Lokasi Toko <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  id="storeAddress"
+                  name="storeAddress"
+                  value={formData.storeAddress}
+                  onChange={handleInputChange}
+                  placeholder="Contoh: Banda Aceh, Aceh"
+                  className="w-full px-4 py-2 pl-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand01/20 focus:border-brand01 outline-none transition-all"
+                  required
+                />
+                <MapPin className="w-5 h-5 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+            
+            <div>
               <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-1">
                 Deskripsi Toko
               </label>
@@ -163,6 +180,93 @@ export default function CreateStore() {
                 rows={4}
                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand01/20 focus:border-brand01 outline-none transition-all"
               />
+            </div>
+
+            <div className="border-t border-slate-200 pt-4">
+              <h3 className="font-medium text-slate-800 mb-3">Informasi Kontak <span className="text-red-500">*</span></h3>
+              <p className="text-sm text-slate-500 mb-4">Setidaknya isi salah satu metode kontak di bawah ini.</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 flex items-center justify-center bg-green-50 rounded-lg mr-3">
+                    <Phone className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <label htmlFor="whatsAppNumber" className="block text-sm font-medium text-slate-700 mb-1">
+                      Nomor WhatsApp
+                    </label>
+                    <input
+                      type="text"
+                      id="whatsAppNumber"
+                      name="whatsAppNumber"
+                      value={formData.whatsAppNumber}
+                      onChange={handleInputChange}
+                      placeholder="Contoh: 08123456789"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand01/20 focus:border-brand01 outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <div className="w-10 h-10 flex items-center justify-center bg-purple-50 rounded-lg mr-3">
+                    <Instagram className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div className="flex-1">
+                    <label htmlFor="instagram" className="block text-sm font-medium text-slate-700 mb-1">
+                      Instagram
+                    </label>
+                    <input
+                      type="text"
+                      id="instagram"
+                      name="instagram"
+                      value={formData.instagram}
+                      onChange={handleInputChange}
+                      placeholder="Contoh: @tanimakmur"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand01/20 focus:border-brand01 outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <div className="w-10 h-10 flex items-center justify-center bg-blue-50 rounded-lg mr-3">
+                    <Facebook className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <label htmlFor="facebook" className="block text-sm font-medium text-slate-700 mb-1">
+                      Facebook
+                    </label>
+                    <input
+                      type="text"
+                      id="facebook"
+                      name="facebook"
+                      value={formData.facebook}
+                      onChange={handleInputChange}
+                      placeholder="Contoh: TaniMakmur atau URL Facebook"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand01/20 focus:border-brand01 outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <div className="w-10 h-10 flex items-center justify-center bg-cyan-50 rounded-lg mr-3">
+                    <Globe className="w-5 h-5 text-cyan-600" />
+                  </div>
+                  <div className="flex-1">
+                    <label htmlFor="officialWebsite" className="block text-sm font-medium text-slate-700 mb-1">
+                      Website
+                    </label>
+                    <input
+                      type="text"
+                      id="officialWebsite"
+                      name="officialWebsite"
+                      value={formData.officialWebsite}
+                      onChange={handleInputChange}
+                      placeholder="Contoh: https://tanimakmur.com"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand01/20 focus:border-brand01 outline-none transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
             
             <div className="pt-4 border-t border-slate-200">
